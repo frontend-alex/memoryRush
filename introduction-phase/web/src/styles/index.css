@@ -1,8 +1,15 @@
+@import './tailwind-extended.css';
+@import './custom.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ... */
+
+:root{
+  --mainColor: #FF6F61;
+}
 
 @layer base {
   :root {
@@ -116,4 +123,14 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer utilities {
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}
+
+p{
+  @apply text-sm text-stone-400
 }
