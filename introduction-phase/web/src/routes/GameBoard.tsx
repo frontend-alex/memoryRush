@@ -31,13 +31,13 @@ const GameCard = ({
       }
     >
       <div className="back">
-        <img src="/public/images/cardImages/questionmark.png" className="w-1/2 lg:w-1/3" alt="question mark"/>
+        <img src="/images/cardImages/questionmark.png" className="w-1/2 lg:w-1/3" alt="question mark"/>
       </div>
       <div className="front">
         <img
           className="w-full lg:w-1/2 mx-auto flex-center"
           alt={name}
-          src={"/public/images/cardImages/" + name + ".png"}
+          src={"/images/cardImages/" + name + ".png"}
         />
       </div>
     </div>

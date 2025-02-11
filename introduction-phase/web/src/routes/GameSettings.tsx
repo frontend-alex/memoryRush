@@ -61,7 +61,7 @@ const GameSettings = () => {
   return (
     <div className="flex-col-5 overflow-hidden">
       <img
-        src="/public/images/dancing.png"
+        src="/images/dancing.png"
         className="absolute left-5 bottom-56 -rotate-15  w-[15%] z-[-1]"
         alt="dancing lady"
       />
