@@ -1,5 +1,3 @@
-import React from "react";
-
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import Gridbackround from "../ui/backgrounds/grid-backround";
@@ -13,7 +11,7 @@ const RouteLayout = () => {
   return (
     <div className="flex flex-col gap-10 justify-between min-h-screen">
       <div className="space-y-10">
-        <div>
+        <div className="relative">
           <Navbar />
           <Gridbackround
             className={`${

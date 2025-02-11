@@ -18,28 +18,38 @@ const GameSettingsCard = ({
   numOfCards,
 }: TGameSetting) => {
   return (
-    <div className="flex-between gap-3 p-3 border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 rounded-lg group">
-      <div className="flex-3 w-full">
-        <span
-          style={{ backgroundColor: color }}
-          className="w-[10px] h-[70px] rounded-lg"
-        />
-        <div>
-          <h1 className="text-lg font-bold">{levelName}</h1>
-          <p>{description}</p>
-          <p>
-            Number of cards: <strong>{numOfCards}</strong>
-          </p>
+    <div>
+      {localStorage.getItem(`highscore-${numOfCards}`) && (
+        <div className="ml-auto w-max bg-amber-100 rounded-t-lg py-1 px-2 flex justify-end items-end">
+          <h1 className="text-sm text-amber-300">
+            Best score: {localStorage.getItem(`highscore-${numOfCards}`)}
+          </h1>
         </div>
+      )}
+
+      <div className="flex-between gap-3 p-3 border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-950 rounded-lg group">
+        <div className="flex-3 w-full">
+          <span
+            style={{ backgroundColor: color }}
+            className="w-[10px] h-[70px] rounded-lg"
+          />
+          <div>
+            <h1 className="text-lg font-bold">{levelName}</h1>
+            <p>{description}</p>
+            <p>
+              Number of cards: <strong>{numOfCards}</strong>
+            </p>
+          </div>
+        </div>
+        <Link to={`/game?cardId=${numOfCards}`}>
+          <Button
+            className="opacity-0 group-hover:opacity-100 transition-all rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none"
+            variant={"outline"}
+          >
+            <Play fill="white" className="text-white" size={40} />
+          </Button>
+        </Link>
       </div>
-      <Link to={`/game?cardId=${numOfCards}`}>
-        <Button
-          className="opacity-0 group-hover:opacity-100 transition-all rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none"
-          variant={"outline"}
-        >
-          <Play fill="white" className="text-white" size={40} />
-        </Button>
-      </Link>
     </div>
   );
 };

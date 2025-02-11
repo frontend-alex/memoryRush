@@ -4,6 +4,7 @@ import GameController from "@/controllers/GameController";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Share } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { calculateScore } from "@/lib/utils";
 
 
 const GameCard = ({
@@ -89,9 +90,15 @@ const GameBoard = () => {
             You’ve successfully matched all the cards! Your memory and skills
             have been put to the test, and you’ve come out victorious.
           </p>
-          <h1 className="font-bold">
+          <div className="text-center">
+            <h1 className="font-bold">
             Time taken: {humanizeDuration(elapsedTime)}
           </h1>
+          <h1 className="font-bold">
+            Current Score: {calculateScore(elapsedTime, { allowBonus: true })}
+          </h1>
+          </div>
+          
           <div className="flex-3">
             <Button onClick={() => navigate(-1)} variant={"outline"}>
               <ChevronLeft /> Go Back

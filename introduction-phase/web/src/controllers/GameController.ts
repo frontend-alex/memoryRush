@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { generateCards, shuffle, TriggerConfetti } from "@/lib/utils";
+import { calculateScore, generateCards, shuffle, TriggerConfetti } from "@/lib/utils";
 import { TCard, TFlippedCard, TGameControllerReturn } from "@/types/Types";
+import { toast } from "react-toastify";
+import { gameSettingsCards } from "@/constants/Data";
 
 const GameController = (userChoice: number): TGameControllerReturn => {
   const cards: string[] = generateCards(userChoice);
@@ -16,34 +18,55 @@ const GameController = (userChoice: number): TGameControllerReturn => {
     }))
   );
 
-
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [elapsedTime, setElapsedTime] = useState<number>(0); 
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [flippedCards, setFlippedCards] = useState<TFlippedCard[]>([]);
+  
+  const [bestTime, setBestTime] = useState<number | null>(() => {
+    const savedTime = localStorage.getItem(`highscore-${userChoice}`);
+    return savedTime ? Number(savedTime) : null;
+  });
+
+  const [overallBestTime, setOverallBestTime] = useState<number | null>(null);
 
   useEffect(() => {
-    let timerInterval: NodeJS.Timeout | null = null; 
+    const allLevelTimes: number[] = [];
+    for (let i = 1; i <= gameSettingsCards.length; i++) { 
+      const levelTime = localStorage.getItem(`highscore-${i}`);
+      if (levelTime) {
+        allLevelTimes.push(Number(levelTime));
+      }
+    }
+
+    if (allLevelTimes.length > 0) {
+      setOverallBestTime(Math.min(...allLevelTimes));
+    }
+  }, []);
+
+  useEffect(() => {
+    let timerInterval: NodeJS.Timeout | null = null;
 
     if (!gameOver) {
       timerInterval = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1000); 
+        setElapsedTime((prevTime) => prevTime + 1000);
       }, 1000);
     } else {
       if (timerInterval) clearInterval(timerInterval);
     }
 
-    // Cleanup the interval when the component is unmounted or game is over
     return () => {
       if (timerInterval) clearInterval(timerInterval);
     };
-  }, [gameOver]); 
+  }, [gameOver]);
 
   const handleClick = (name: string, index: number) => {
     if (flippedCards.length === 2) return;
 
     const currentCard: TFlippedCard = { name, index };
 
-    const updatedCards = cardList.map((card) => card.id === index ? { ...card, flipped: true } : card);
+    const updatedCards = cardList.map((card) =>
+      card.id === index ? { ...card, flipped: true } : card
+    );
 
     const updatedFlipped = [...flippedCards, currentCard];
 
@@ -57,12 +80,10 @@ const GameController = (userChoice: number): TGameControllerReturn => {
     }
   };
 
-
   const check = (flipped: TFlippedCard[]) => {
     if (flipped.length < 2) return;
 
     const [firstCard, secondCard] = flipped;
-    
 
     setCardList((prevCards) =>
       prevCards.map((card) => {
@@ -84,35 +105,28 @@ const GameController = (userChoice: number): TGameControllerReturn => {
     setTimeout(() => setPreFlip(false), 1000);
   }, []);
 
-
   useEffect(() => {
     const isGameOver = cardList.every((card) => card.matched);
     setGameOver(isGameOver);
-    if(isGameOver) TriggerConfetti();
-  }, [cardList]); 
-
-  // const restartGame = () => {
-  //   const shuffledCards = shuffle(cards).map((name, index) => ({
-  //     id: index,
-  //     name,
-  //     flipped: false,
-  //     matched: false,
-  //   }));
-
-  //   setCardList(shuffledCards);
-  //   setFlippedCards([]);
-  //   setGameOver(false);
-  //   setElapsedTime(0); 
-  // };
+  
+    if (isGameOver) {
+      const newScore = calculateScore(elapsedTime, { allowBonus: true });
+      if (!bestTime || newScore > bestTime) {
+        setBestTime(newScore);
+        TriggerConfetti();
+        localStorage.setItem(`highscore-${userChoice}`, String(newScore));
+        toast.success("New Highscore!");
+      }
+    }
+  }, [cardList, elapsedTime, bestTime, userChoice]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.returnValue = "Are you sure you want to leave? Your progress will be lost.";
+      event.preventDefault();
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // Cleanup the event listener when the component is unmounted
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
@@ -122,8 +136,10 @@ const GameController = (userChoice: number): TGameControllerReturn => {
     gameOver,
     cardList,
     flippedCards,
-    elapsedTime, 
+    elapsedTime,
     preFlip,
+    bestTime,  
+    overallBestTime, 
     handleClick,
   };
 };

@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { availableCards } from "@/constants/Data";
 import confetti from "canvas-confetti";
+import { ScoreOptions } from "@/types/Types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -33,6 +34,49 @@ export const generateCards = (num: number): string[] => {
 
   return shuffle(generatedCards);
 };
+
+export const calculateScore = (
+  elapsedTime: number,
+  options?: ScoreOptions
+): number => {
+  // Set default options and override if provided
+  const {
+    maxScore = 100,
+    idealTime = 30,
+    decayRate = 0.04,
+    precision = 0,
+    allowBonus = false,
+  } = options || {};
+
+  // Convert elapsed time from milliseconds to seconds
+  const seconds = elapsedTime / 1000;
+
+  let rawScore: number;
+  if (allowBonus) {
+    if (seconds <= idealTime) {
+      // The bonus factor rewards finishing faster than the ideal time.
+      // For example, if idealTime is 30 and you finish in 18 seconds,
+      // the factor is 30/18 ≈ 1.67, so the score is about 167.
+      rawScore = maxScore * (idealTime / seconds);
+    } else {
+      // For times above the ideal, the score decays exponentially.
+      rawScore = maxScore * Math.exp(-decayRate * (seconds - idealTime));
+    }
+  } else {
+    // Without bonus, any time below or equal to the ideal time gets maxScore.
+    if (seconds <= idealTime) {
+      rawScore = maxScore;
+    } else {
+      rawScore = maxScore * Math.exp(-decayRate * (seconds - idealTime));
+    }
+  }
+
+  // Ensure the score is not negative and round it to the desired precision.
+  const finalScore = Math.max(0, rawScore);
+  const factor = Math.pow(10, precision);
+  return Math.round(finalScore * factor) / factor;
+};
+
 
 export const TriggerConfetti = () => {
   const end = Date.now() + 3 * 2000; 
