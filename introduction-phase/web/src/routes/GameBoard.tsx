@@ -29,7 +29,9 @@ const GameCard = ({
         "card" + (flipped || preFlip ? " flipped" : "") + (matched ? " matched" : "")
       }
     >
-      <div className="back">?</div>
+      <div className="back">
+        <img src="/public/images/cardImages/questionmark.png" className="w-1/3" alt="question mark"/>
+      </div>
       <div className="front">
         <img
           className="w-1/2 mx-auto flex-center"
