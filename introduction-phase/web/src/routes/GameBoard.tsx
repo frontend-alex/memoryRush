@@ -31,11 +31,11 @@ const GameCard = ({
       }
     >
       <div className="back">
-        <img src="/public/images/cardImages/questionmark.png" className="w-1/3" alt="question mark"/>
+        <img src="/public/images/cardImages/questionmark.png" className="w-1/2 lg:w-1/3" alt="question mark"/>
       </div>
       <div className="front">
         <img
-          className="w-1/2 mx-auto flex-center"
+          className="w-full lg:w-1/2 mx-auto flex-center"
           alt={name}
           src={"/public/images/cardImages/" + name + ".png"}
         />
@@ -58,7 +58,8 @@ const GameBoard = () => {
     <div className="flex-col-5">
       {!gameOver ? (
         <div className="flex-between">
-          <h1 className="font-bold text-2xl">
+          <div className="flex lg:hidden"/>
+          <h1 className="hidden lg:flex font-bold text-2xl">
             Elapsed time: {humanizeDuration(elapsedTime)}
           </h1>
           <Link className="flex-2 text-stone-400" to={"/game-settings"}>
@@ -68,7 +69,7 @@ const GameBoard = () => {
       ) : (
         ""
       )}
-      <div className="grid-6 gap-5 game-board">
+      <div className="grid grid-cols-4 lg:grid-cols-6 gap-5 game-board">
         {!gameOver &&
           cardList.map((card, index) => (
             <GameCard

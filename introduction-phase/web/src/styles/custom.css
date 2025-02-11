@@ -9,6 +9,8 @@
     justify-content: center;
     align-items: center;
 }
+
+
   
   .game-board .card div {
     @apply backface-hidden absolute top-0 left-0 w-full h-full rounded-lg transition-all normal-border flex-center
@@ -53,5 +55,11 @@
     }
     100% {
       opacity: 0.3;
+    }
+  }
+
+  @media screen and (max-width:800px) {
+    .game-board .card{
+      height: 100px;
     }
   }

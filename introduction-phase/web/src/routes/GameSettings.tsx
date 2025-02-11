@@ -20,7 +20,7 @@ const GameSettingsCard = ({
   return (
     <div>
       {localStorage.getItem(`highscore-${numOfCards}`) && (
-        <div className="ml-auto w-max bg-amber-100 rounded-t-lg py-1 px-2 flex justify-end items-end">
+        <div className="ml-auto w-max bg-amber-100 dark:bg-amber-500/10 rounded-t-lg py-1 px-2 flex justify-end items-end">
           <h1 className="text-sm text-amber-300">
             Best score: {localStorage.getItem(`highscore-${numOfCards}`)}
           </h1>

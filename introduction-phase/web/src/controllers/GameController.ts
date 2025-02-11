@@ -115,7 +115,7 @@ const GameController = (userChoice: number): TGameControllerReturn => {
         setBestTime(newScore);
         TriggerConfetti();
         localStorage.setItem(`highscore-${userChoice}`, String(newScore));
-        toast.success("New Highscore!");
+        // toast.success("New Highscore!");
       }
     }
   }, [cardList, elapsedTime, bestTime, userChoice]);

@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="flex-between-res">
         <div className="flex-3">
           <div className="bg-white p-2 rounded-lg">
-            <Brain size={25} />
+            <Brain size={25} className="text-black" />
           </div>
           <h1 className="font-bold text-white text-xl">
             MemoryRush

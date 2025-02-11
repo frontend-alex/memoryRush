@@ -1,45 +1,47 @@
-# 🃏 Memory Match Game - Concept & Features  
+# Programming Journey: C# OOP & SQL
 
-## 🎯 Concept  
-The Memory Match Game is a fun, interactive, and minimalist card-matching game designed for an **engaging and distraction-free experience**. Unlike many similar games, it focuses on **simplicity, smooth animations, and an intuitive UI**, making it enjoyable for all ages.  
+This repository is dedicated to tracking my progress and work in C# Object-Oriented Programming (OOP) and SQL programming. It will serve as a place for me to document and showcase the concepts, exercises, and projects I am learning throughout my programming journey.
 
----
+## Table of Contents
 
-## ⚠️ 5 Common Problems in Other Memory Games  
-1. **Overcomplicated UI:** Many games have cluttered interfaces that make the gameplay confusing.  
-2. **Distracting Ads & Pop-ups:** Most free games flood users with ads, ruining the experience.  
-3. **Poor Performance & Lag:** Heavy animations and bloated code cause slow, unresponsive gameplay.  
-4. **Lack of Progress Tracking:** Players don’t get feedback on their performance or time taken.  
-5. **No Pre-Flip Preview:** Many games lack a short preview of card positions before shuffling.  
+- [Introduction Week](#introduction-week)
+- [C# OOP Programming](#c-sharp-oop-programming)
+- [SQL Programming](#sql-programming)
+- [Future Work](#future-work)
 
----
+## Introduction Week
 
-## ✅ 5 Reasons Why This Game Stands Out  
-### 1️⃣ **Minimalist & Clean UI**  
-- Simple yet beautiful design with **smooth animations**.  
-- No unnecessary elements—just **pure gameplay focus**.  
+The first week is focused on the basic introduction to C# programming, understanding fundamental concepts of Object-Oriented Programming (OOP), and the foundation of SQL programming. During this week, I will cover:
+- Setting up a C# development environment
+- Understanding basic data types, variables, and control structures in C#
+- Introduction to SQL queries and databases
 
-### 2️⃣ **No Ads, No Distractions**  
-- Completely **ad-free experience** for uninterrupted fun.  
-- No annoying pop-ups, making it **child-friendly**.  
+## C# OOP Programming
 
-### 3️⃣ **Optimized for Speed & Smoothness**  
-- Lightweight, **fast-loading**, and works even on low-end devices.  
-- Uses optimized animations that **don’t cause lag**.  
+As I progress with C#, I will dive deeper into object-oriented programming concepts. The following topics will be explored:
+- Classes and objects
+- Encapsulation
+- Inheritance
+- Polymorphism
+- Abstraction
+- Interfaces and events
+- Exception handling
 
-### 4️⃣ **Built-in Timer & Performance Tracking**  
-- Tracks how long you take to **finish a game**.  
-- Encourages players to **improve their memory skills** over time.  
+Each folder or file in this section will document and demonstrate a specific concept, as well as provide sample code and explanations for better understanding.
 
-### 5️⃣ **Smart Pre-Flip Feature for Better Memory Training**  
-- Cards briefly **flip at the start**, giving players a chance to memorize them.  
-- This **enhances cognitive recall** and makes the game **more strategic**.  
+## SQL Programming
 
----
+Alongside C#, I will explore SQL programming, including:
+- Basic SQL commands (SELECT, INSERT, UPDATE, DELETE)
+- Joins, subqueries, and advanced querying
+- Database normalization
+- Data manipulation
+- Stored procedures and triggers
 
-## 🚀 Future Improvements  
-- **Multiplayer mode** to challenge friends.  
-- **Leaderboard & achievements** for added motivation.  
-- **Different difficulty levels** for beginners and pros.  
+The SQL section will track my progress with practical examples, exercises, and any projects related to SQL databases.
 
-🎮 Ready to test your memory? **Let’s play!**  
+## Future Work
+
+As I continue to learn and grow, I will keep adding new projects, examples, and explanations related to C# OOP and SQL. The repository will evolve with my knowledge and skills in these areas.
+
+Feel free to explore and contribute to any ideas or improvements in my coding journey!
