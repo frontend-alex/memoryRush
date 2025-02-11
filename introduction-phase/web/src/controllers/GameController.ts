@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { calculateScore, generateCards, shuffle, TriggerConfetti } from "@/lib/utils";
-import { TCard, TFlippedCard, TGameControllerReturn } from "@/types/Types";
-import { toast } from "react-toastify";
 import { gameSettingsCards } from "@/constants/Data";
+import { TCard, TFlippedCard, TGameControllerReturn } from "@/types/Types";
+import { calculateScore, generateCards, shuffle, TriggerConfetti } from "@/lib/utils";
 
 const GameController = (userChoice: number): TGameControllerReturn => {
   const cards: string[] = generateCards(userChoice);
