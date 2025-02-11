@@ -1,5 +1,8 @@
 # MemoryRush
 
+![Open Doodles Example 1](./public/images/dancing.png)
+![Open Doodles Example 2](./public/images/win.png)
+
 ![MemoryRush Logo](./assets/memoryrush-logo.png)
 
 MemoryRush is a sleek, minimalist memory matching game designed to challenge your memory while offering a fun, engaging, and distraction-free experience. With dynamic scoring, smooth animations, and delightful confetti celebrations, MemoryRush sets itself apart from other memory games.
@@ -49,8 +52,8 @@ The MemoryRush brand is represented by its unique logo:
 
 MemoryRush uses creative illustrations from [Open Doodles](https://www.opendoodles.com/) to add a playful and engaging touch to the game's design. Below are a couple of example assets:
 
-![Open Doodles Example 1](https://cdn.jsdelivr.net/gh/creativetimofficial/public-assets@master/opendoodles/doodle-1.svg)
-![Open Doodles Example 2](https://cdn.jsdelivr.net/gh/creativetimofficial/public-assets@master/opendoodles/doodle-2.svg)
+![Open Doodles Example 1](./public/images/dancing.png)
+![Open Doodles Example 2](./public/images/win.png)
 
 *Note: Replace these URLs with the paths to your actual assets if they differ.*
 
