@@ -5,8 +5,8 @@ const LandingPage = () => {
 
   return (
     <div>
-      <div className="max-h-screen w-full overflow-hidden">
-        <header className="flex flex-col gap-5 items-center justify-center min-h-[70vh] text-center max-w-5xl mx-auto">
+      <div className="w-full">
+        <header className="flex flex-col gap-5 items-center justify-center text-center max-w-5xl mx-auto">
           <div className="bg-rose-100 dark:bg-rose-600/10 rounded-lg px-2 py-1">
             <p className="text-rose-500 font-medium">
               Introducing Memory Rush 2.0
@@ -25,7 +25,7 @@ const LandingPage = () => {
             <a href="/game-settings">Choose a game mode</a>
           </Button>
         </header>
-        <img className="hidden lg:flex absolute 2xl:top-[20%] xl:left-20 z-[-1] -rotate-45" src="/images/landingpage.png" alt="" />
+        <img className="hidden lg:flex absolute 2xl:top-[20%] -left-32  z-[-1] -rotate-45" src="/images/landingpage.png" alt="" />
         <span className="hidden z-[-1] sm:flex absolute bottom-0 top-36 xl:left-1/2 w-[600px] h-[600px] overflow-hidden bg-rose-600/30 dark:bg-rose-600/10 blur-3xl"></span>
       </div>
     </div>

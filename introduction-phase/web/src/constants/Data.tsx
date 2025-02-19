@@ -88,6 +88,23 @@ export const gameSettingsCards: TGameSetting[] = [
     numOfCards: 20,
     description: "A tough challenge with many cards to sort, test your skills to the max."
   }
+  ,
+  {
+    difficulty: "easy",
+    color: "#4ade80", 
+    levelName: "Ultimate Test",
+    numOfCards: 2,
+    description: "A tough challenge with many cards to sort, test your skills to the max."
+  }
+  ,
+  {
+    difficulty: "hard",
+    color: "#ef4444", 
+    levelName: "Ultimate Test",
+    numOfCards: 28,
+    description: "A tough challenge with many cards to sort, test your skills to the max."
+  }
+  ,
 ];
 
 
