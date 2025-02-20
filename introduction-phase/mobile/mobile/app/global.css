@@ -132,5 +132,5 @@ a {
   @apply box-border w-full border border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 rounded-3xl
 }
 .button{
-  @apply bg-rose-500 shadow-md shadow-zinc-300 rounded-full w-full py-3 text-white flex-center dark:shadow-zinc-700
+  @apply bg-rose-500 shadow-md shadow-zinc-300 rounded-full w-full py-3 text-white flex-center dark:shadow-zinc-800
 }

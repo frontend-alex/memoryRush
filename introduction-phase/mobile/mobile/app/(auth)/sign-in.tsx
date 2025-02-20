@@ -3,20 +3,19 @@ import { LoginInputs } from "@/constants/data";
 import {
   View,
   Text,
-  useWindowDimensions,
   TextInput,
   Image,
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { login } from "@/libs/appwrite";
+import { Redirect } from "expo-router";
+import { ThemedView, ThemedText, ThemedBorder } from "@/components/ui/themed-components";
+import { useGlobalContext } from "@/libs/global-provider";
+
 import Logo from "@/components/ui/logo";
 import icons from "@/constants/icons";
-import ThemedView from "@/components/ui/themed-view";
-import ThemedText from "@/components/ui/themed-text";
-import { useGlobalContext } from "@/libs/global-provider";
-import { Redirect } from "expo-router";
-import { login } from "@/libs/appwrite";
+import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
 interface FormDataProps {
   username: string;
@@ -25,8 +24,6 @@ interface FormDataProps {
 }
 
 const InitialPage = () => {
-  const { height } = useWindowDimensions();
-
   const [togglePassword, setTogglePassword] = useState<boolean>(false);
 
   const [data, setData] = useState<FormDataProps>({
@@ -58,9 +55,8 @@ const InitialPage = () => {
   };
 
   return (
-    <SafeAreaView
-      style={{ height: height }}
-      className="bg-neutral-50 dark:bg-neutral-900 flex justify-between pb-10 px-5 relative"
+    <FullSafeAreaScreen
+      className="flex justify-between pb-10"
     >
       <ThemedView className="flex flex-col gap-10 items-center mt-10">
         <View className="flex-col-3 w-full">
@@ -103,9 +99,9 @@ const InitialPage = () => {
           </TouchableOpacity>
 
           <View className="flex flex-row justify-center items-center gap-4 w-full">
-            <View className="w-1/3 bg-stone-300 h-[1px]" />
+            <ThemedBorder/>
             <Text className="text-stone-400 text-sm">Or</Text>
-            <View className="w-1/3 bg-stone-300 h-[1px]" />
+            <ThemedBorder/>
           </View>
 
           <TouchableOpacity
@@ -125,7 +121,7 @@ const InitialPage = () => {
           </TouchableOpacity>
         </View>
       </ThemedView>
-    </SafeAreaView>
+    </FullSafeAreaScreen>
   );
 };
 

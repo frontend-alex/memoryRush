@@ -6,19 +6,20 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useRouter } from "expo-router";
+import { ThemedText } from "@/components/ui/themed-components";
 
 import LandingPageImage from "@/assets/images/landingpage.png";
-import { Link } from "expo-router";
-import ThemedText from "@/components/ui/themed-text";
+import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
 const InitialPage = () => {
   const { height } = useWindowDimensions();
+  const router = useRouter()
 
   return (
-    <SafeAreaView
-      style={{ height: height }}
-      className="bg-white dark:bg-neutral-900 flex justify-between pb-10 px-5"
+    <FullSafeAreaScreen
+      className="flex justify-between pb-10"
     >
       <View className="bg-rose-500 absolute top-0 h-[170px] -translate-x-1/2 left-1/2 w-full rounded-b-full z-[-1]" />
 
@@ -39,15 +40,12 @@ const InitialPage = () => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity className="button">
-        <Link
-          href="/sign-in"
-          className="text-lg text-center text-white font-rubik-medium"
-        >
-          Continue
-        </Link>
+      <TouchableOpacity className="button" onPress={() => router.push('/sign-in')}>
+          <Text className="text-lg text-white font-rubik-semibold">
+            Continue
+          </Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </FullSafeAreaScreen>
   );
 };
 

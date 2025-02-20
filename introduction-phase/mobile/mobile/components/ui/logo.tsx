@@ -1,11 +1,14 @@
 import icons from "@/constants/icons";
-import { cn } from "@/libs/utils";
-import { View, Text, Image, StyleSheet } from "react-native";
-import ThemedText from "./themed-text";
+import { View, Image } from "react-native";
+import { ThemedText } from "./themed-components";
 
-const Logo = () => {
+const Logo = ({ type = "horizontal" }: { type?: "horizontal" | "vertical" }) => {
   return (
-    <View className="flex items-center flex-row gap-2">
+    <View
+      className={`flex ${
+        type === "vertical" ? "flex-col" : "flex-row"
+      } items-center  gap-2`}
+    >
       <View className="bg-rose-500 rounded-md p-2">
         <Image source={icons.brain} />
       </View>
@@ -15,7 +18,5 @@ const Logo = () => {
     </View>
   );
 };
-
-
 
 export default Logo;
