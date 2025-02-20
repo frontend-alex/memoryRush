@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  useWindowDimensions,
 } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -14,14 +13,14 @@ import LandingPageImage from "@/assets/images/landingpage.png";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
 const InitialPage = () => {
-  const { height } = useWindowDimensions();
-  const router = useRouter()
+  const router = useRouter();
 
   return (
-    <FullSafeAreaScreen
-      className="flex justify-between pb-10"
-    >
-      <View className="bg-rose-500 absolute top-0 h-[170px] -translate-x-1/2 left-1/2 w-full rounded-b-full z-[-1]" />
+    <FullSafeAreaScreen className="flex justify-between pb-10">
+      <View
+        className="bg-rose-500 absolute top-0 h-[170px]  w-full rounded-b-full"
+        style={{ elevation: 1 }} 
+      />
 
       <View className="flex flex-col items-center">
         <Image
@@ -40,10 +39,11 @@ const InitialPage = () => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity className="button" onPress={() => router.push('/sign-in')}>
-          <Text className="text-lg text-white font-rubik-semibold">
-            Continue
-          </Text>
+      <TouchableOpacity
+        className="button"
+        onPress={() => router.push("/sign-in")}
+      >
+        <Text className="text-lg text-white font-rubik-semibold">Continue</Text>
       </TouchableOpacity>
     </FullSafeAreaScreen>
   );

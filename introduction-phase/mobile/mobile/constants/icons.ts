@@ -17,6 +17,11 @@ import bell from '@/assets/icons/bell.png';
 import shield from '@/assets/icons/shield.png';
 import language from '@/assets/icons/languages.png';
 import addPeople from '@/assets/icons/user-plus.png';
+import search from '@/assets/icons/search.png';
+import filter from '@/assets/icons/sliders-horizontal.png'
+import play from '@/assets/icons/play.png'
+import githubWhite from '@/assets/icons/github-mark-white.png'
+import githubBlack from '@/assets/icons/github-mark.png'
 
 
 export default {
@@ -38,5 +43,10 @@ export default {
   bell,
   shield,
   language,
-  addPeople
+  addPeople,
+  search,
+  filter,
+  play,
+  githubWhite,
+  githubBlack,
 }

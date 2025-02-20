@@ -7,8 +7,9 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from "react-native";
-import { login } from "@/libs/appwrite";
+import { loginWithProvider } from "@/libs/appwrite";
 import { Redirect } from "expo-router";
 import { ThemedView, ThemedText, ThemedBorder } from "@/components/ui/themed-components";
 import { useGlobalContext } from "@/libs/global-provider";
@@ -16,6 +17,8 @@ import { useGlobalContext } from "@/libs/global-provider";
 import Logo from "@/components/ui/logo";
 import icons from "@/constants/icons";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
+import { useTheme } from "@/contexts/ThemeProvider";
+import { OAuthProvider } from "react-native-appwrite";
 
 interface FormDataProps {
   username: string;
@@ -24,6 +27,7 @@ interface FormDataProps {
 }
 
 const InitialPage = () => {
+
   const [togglePassword, setTogglePassword] = useState<boolean>(false);
 
   const [data, setData] = useState<FormDataProps>({
@@ -45,8 +49,8 @@ const InitialPage = () => {
 
   if (!loading && isLogged) return <Redirect href="/" />;
 
-  const handleLogin = async () => {
-    const result = await login();
+  const handleGoogleLogin = async () => {
+    const result = await loginWithProvider(OAuthProvider.Google);
     if (result) {
       refetch();
     } else {
@@ -54,11 +58,21 @@ const InitialPage = () => {
     }
   };
 
+  const handleGithubLogin = async () => {
+    const result = await loginWithProvider(OAuthProvider.Github);
+    if (result) {
+      refetch();
+    } else {
+      Alert.alert("Error", "Failed to login");
+    }
+  };
+
+
   return (
     <FullSafeAreaScreen
-      className="flex justify-between pb-10"
+      className="flex justify-between pb-10 p-0"
     >
-      <ThemedView className="flex flex-col gap-10 items-center mt-10">
+      <ScrollView  showsVerticalScrollIndicator={false} contentContainerClassName="flex flex-col gap-10 items-center mt-10 px-5">
         <View className="flex-col-3 w-full">
           <Logo />
           <ThemedText className="font-black text-2xl mt-3">
@@ -105,7 +119,7 @@ const InitialPage = () => {
           </View>
 
           <TouchableOpacity
-            onPress={handleLogin}
+            onPress={handleGoogleLogin}
             className="bg-white shadow-md shadow-zinc-300 dark:shadow-zinc-700 rounded-full w-full py-4"
           >
             <View className="flex flex-row items-center justify-center">
@@ -119,8 +133,23 @@ const InitialPage = () => {
               </Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleGithubLogin}
+            className="bg-white shadow-md shadow-zinc-300 dark:shadow-zinc-700 rounded-full w-full py-4"
+          >
+            <View className="flex flex-row items-center justify-center">
+              <Image
+                source={icons.githubBlack}
+                className="w-5 h-5"
+                resizeMode="contain"
+              />
+              <Text className="text-lg font-rubik-medium text-black-300 ml-2">
+                Continue with Github
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
-      </ThemedView>
+      </ScrollView>
     </FullSafeAreaScreen>
   );
 };

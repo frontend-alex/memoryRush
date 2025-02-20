@@ -79,6 +79,16 @@ const LoggedLayout = () => {
           ),
         }}
       />
+       <Tabs.Screen
+        name="game"
+        options={{
+          title: "Games",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon={icons.gamepad} focused={focused} title="Games" />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{

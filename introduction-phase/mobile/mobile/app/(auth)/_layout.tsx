@@ -17,6 +17,7 @@ const AuthLayout = () => {
     return <SplashScreen />;
   }
 
+
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />

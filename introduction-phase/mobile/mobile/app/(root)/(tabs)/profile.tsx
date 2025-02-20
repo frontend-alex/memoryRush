@@ -1,7 +1,7 @@
 import icons from "@/constants/icons";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
-import { ThemedText, ThemedView } from "@/components/ui/themed-components";
+import { ThemedIcon, ThemedText, ThemedView } from "@/components/ui/themed-components";
 import { useGlobalContext } from "@/libs/global-provider";
 import {
   Alert,
@@ -78,7 +78,7 @@ const Profile = () => {
     <FullSafeAreaScreen>
       <View className="flex flex-row items-center justify-between">
         <ThemedText className="text-xl font-rubik-bold">Profile</ThemedText>
-        <Image className="size-5" />
+        <ThemedIcon icon={icons.user}/>
       </View>
 
       <ScrollView
@@ -115,7 +115,7 @@ const Profile = () => {
           ))}
         </View>
 
-        <ThemedView className="flex flex-col border-t mt-5 pt-5 border-neutral-200 dark:border-neutral-700">
+        <View className="flex flex-col mt-5 pt-5 border-t border-neutral-200 dark:border-neutral-700">
           <SettingsItem
             isArray={false}
             icon={icons.logout}
@@ -124,7 +124,7 @@ const Profile = () => {
             showArrow={false}
             onPress={handleLogout}
           />
-        </ThemedView>
+        </View>
       </ScrollView>
     </FullSafeAreaScreen>
   );
