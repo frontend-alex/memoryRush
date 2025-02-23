@@ -47,10 +47,10 @@ export const ThemedBorder: React.FC<ViewProps & { className?: string }> = ({
 }) => {
   const { isDarkMode } = useTheme();
 
-  const viewClass = isDarkMode ? "bg-neutral-700" : "bg-neutral-200";
+  const viewClass = isDarkMode ? "border-neutral-800" : "border-neutral-200";
 
   return (
-    <View className={twMerge(viewClass, className)} {...props}>
+    <View className={twMerge('border w-1/3',viewClass, className)} {...props}>
       {children}
     </View>
   );
@@ -77,11 +77,17 @@ export const ThemedIcon: React.FC<ImageProps & { className?: string, icon: Image
 
 //------------------------themed input -------------------------------//
 export const ThemedInput: React.FC<TextInputProps & { className?: string }> = ({ className, style, ...props }) => {
+
+  const { isDarkMode } = useTheme();
+
+  const viewClass = isDarkMode ? "border-neutral-700 bg-neutral-900" : "border-neutral-200 bg-neutral-50 ";
+
   return (
     <TextInput
-      className={twMerge("px-4 py-2 box-border", className)}
+      className={twMerge("box-border w-full border rounded-3xl", viewClass, className)}
       style={style}
       {...props}
     />
   );
 };
+
