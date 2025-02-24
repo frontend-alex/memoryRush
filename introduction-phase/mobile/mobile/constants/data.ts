@@ -110,6 +110,7 @@ export const SortCards = (setCards: React.Dispatch<React.SetStateAction<any[]>>)
 
 export const gameSettingsCards: GameSettingsProps[] = [
   {
+    id: 1,
     difficulty: "easy",
     color: "#4ade80",
     levelName: "Beginner's Luck",
@@ -117,6 +118,7 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A relaxed level to get started with simple tasks and fewer cards."
   },
   {
+    id: 2,
     difficulty: "medium",
     color: "#fcd34d", 
     levelName: "Intermediate Challenge",
@@ -124,6 +126,7 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A moderate level that introduces more complexity and additional cards."
   },
   {
+    id: 3,
     difficulty: "hard",
     color: "#ef4444", 
     levelName: "Expert's Gauntlet",
@@ -131,6 +134,7 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A challenging level with tough tasks and more cards to handle."
   },
   {
+    id: 4,
     difficulty: "easy",
     color: "#4ade80", 
     levelName: "Casual Play",
@@ -138,6 +142,7 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A very easy and casual level with fewer cards to keep things light."
   },
   {
+    id: 5,
     difficulty: "medium",
     color: "#fcd34d", 
     levelName: "Average Struggle",
@@ -145,6 +150,7 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A balanced level with enough cards to keep you engaged without overwhelming."
   },
   {
+    id: 6,
     difficulty: "hard",
     color: "#ef4444", 
     levelName: "Ultimate Test",

@@ -1,7 +1,12 @@
 import icons from "@/constants/icons";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
-import { ThemedIcon, ThemedText, ThemedView } from "@/components/ui/themed-components";
+import {
+  ThemedBorder,
+  ThemedIcon,
+  ThemedText,
+  ThemedView,
+} from "@/components/ui/themed-components";
 import { useGlobalContext } from "@/libs/global-provider";
 import {
   Alert,
@@ -21,7 +26,7 @@ interface SettingsItemProps {
   onPress?: () => void;
   textStyle?: string;
   showArrow?: boolean;
-  isArray: boolean
+  isArray: boolean;
 }
 
 const SettingsItem = ({
@@ -30,7 +35,7 @@ const SettingsItem = ({
   onPress,
   textStyle,
   showArrow,
-  isArray
+  isArray,
 }: SettingsItemProps) => {
   const { isDarkMode } = useTheme();
 
@@ -41,7 +46,7 @@ const SettingsItem = ({
     >
       <View className="flex flex-row items-center gap-3">
         <Image
-          tintColor={isArray ? isDarkMode ? "white" : "black" : ''}
+          tintColor={isArray ? (isDarkMode ? "white" : "black") : ""}
           source={icon}
           className="size-6"
         />
@@ -78,14 +83,14 @@ const Profile = () => {
     <FullSafeAreaScreen>
       <View className="flex flex-row items-center justify-between">
         <ThemedText className="text-xl font-rubik-bold">Profile</ThemedText>
-        <ThemedIcon icon={icons.user}/>
+        <ThemedIcon icon={icons.user} />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-32"
       >
-        <View className="flex flex-col justify-center mt-5">
+        <View className="flex flex-col justify-center mt-5 mb-3">
           <View className="flex flex-col items-center relative mt-5">
             <Image
               source={{ uri: user?.avatar }}
@@ -109,13 +114,16 @@ const Profile = () => {
           <SettingsItem icon={icons.wallet} title="Payments" />
         </View> */}
 
-        <View className="flex flex-col mt-5 border-t pt-5 border-neutral-200 dark:border-neutral-700">
+        <ThemedBorder className="w-full" />
+
+        <View className="flex flex-col mt-5 pt- mb-2">
           {settings.map((item, index) => (
             <SettingsItem isArray={true} key={index} {...item} />
           ))}
         </View>
 
-        <View className="flex flex-col mt-5 pt-5 border-t border-neutral-200 dark:border-neutral-700">
+        <ThemedBorder className="w-full" />
+        <View className="flex flex-col pt-2">
           <SettingsItem
             isArray={false}
             icon={icons.logout}

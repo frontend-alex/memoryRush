@@ -10,6 +10,7 @@ interface LoginInputsProps {
 type Difficulty = "easy" | "medium" | "hard";
 
 interface GameSettingsProps {
+  id: number
   difficulty: Difficulty;
   color: string;
   levelName: string;
