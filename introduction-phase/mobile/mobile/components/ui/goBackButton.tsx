@@ -1,18 +1,19 @@
 import React from "react";
-import { Image, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native"; 
 import icons from "@/constants/icons";
 
+import { cn } from "@/libs/utils";
+import { TouchableOpacity, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const BackButton = () => {
-  const navigation = useNavigation(); 
+const BackButton = ({ className }: { className?: string }) => {
+  const navigation = useNavigation();
 
   return (
     <TouchableOpacity
-      className="absolute z-[1000] left-5 top-10 "
-      onPress={() => navigation.goBack()} 
+      className={cn("p-2 rounded-full bg-rose-300 w-max", className)}
+      onPress={() => navigation.goBack()}
     >
-        <Image source={icons.chevronLeft} />
+      <Image className="size-7" source={icons.chevronLeft} />
     </TouchableOpacity>
   );
 };

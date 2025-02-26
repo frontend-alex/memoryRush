@@ -19,8 +19,28 @@ interface GameSettingsProps {
 };
 
 
+interface CardProps {
+  id: number;
+  name: string;
+  flipped: boolean;
+  matched: boolean;
+};
+
+interface FlippedCardProps {
+  name: string;
+  index: number;
+};
+
+interface RootStackParamList  {
+  Home: undefined;  // Home doesn't take any parameters
+  Level: { numOfCards: number };  // Level screen expects a numOfCards parameter
+};
+
 
 export {
     LoginInputsProps,
-    GameSettingsProps
+    GameSettingsProps,
+    CardProps,
+    FlippedCardProps,
+    RootStackParamList
 }

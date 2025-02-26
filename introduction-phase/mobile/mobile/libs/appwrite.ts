@@ -7,6 +7,8 @@ import {
   Avatars,
   Query,
   Storage,
+  Permission,
+  Role,
 } from "react-native-appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
@@ -15,14 +17,8 @@ export const config = {
   platform: "com.memoryRush.restate",
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
-  // databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-  // galleriesCollectionId:
-  //   process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID,
-  // reviewsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_REVIEWS_COLLECTION_ID,
-  // agentsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_AGENTS_COLLECTION_ID,
-  // propertiesCollectionId:
-  //   process.env.EXPO_PUBLIC_APPWRITE_PROPERTIES_COLLECTION_ID,
-  // bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
+  databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+  userCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
 };
 
 export const client = new Client();
@@ -43,10 +39,7 @@ export async function loginWithProvider(provider: OAuthProvider) {
     const response = await account.createOAuth2Token(provider, redirectUri);
     if (!response) throw new Error("Create OAuth2 token failed");
 
-    const browserResult = await openAuthSessionAsync(
-      response.toString(),
-      redirectUri
-    );
+    const browserResult = await openAuthSessionAsync(response.toString(), redirectUri);
     if (browserResult.type !== "success") throw new Error("OAuth login failed");
 
     const url = new URL(browserResult.url);
@@ -57,17 +50,61 @@ export async function loginWithProvider(provider: OAuthProvider) {
     const session = await account.createSession(userId, secret);
     if (!session) throw new Error("Failed to create session");
 
+    const user = await account.get();
+    if (!user) throw new Error("User not found");
+
+    console.log("Authenticated User:", user);
+
+    let existingUser;
+    try {
+      existingUser = await databases.listDocuments(config.databaseId!, config.userCollectionId!, [
+        Query.equal("userId", user.$id)
+      ]);
+    } catch (error) {
+      console.error("Error checking user existence:", error);
+      throw new Error("Failed to check user in database");
+    }
+
+    if (existingUser.documents.length === 0) {
+      try {
+        await databases.createDocument(
+          config.databaseId!,
+          config.userCollectionId!,
+          ID.unique(),
+          {
+            userId: user.$id,
+            name: user.name,
+            avatar: user.name ? avatar.getInitials(user.name) : "", 
+            provider,
+          },
+          [
+            Permission.read(Role.user(user.$id)),  
+            Permission.update(Role.user(user.$id)), 
+            Permission.delete(Role.user(user.$id))  
+          ]
+        );
+        console.log("User saved in database.");
+      } catch (error) {
+        console.error("Error saving user to database:", error);
+        throw new Error("Failed to save user in database");
+      }
+    } else {
+      console.log("User already exists in database.");
+    }
+
     return true;
   } catch (error) {
-    console.error(error);
+    console.error("OAuth Login Error:", error);
     return false;
   }
 }
 
 export async function logout() {
   try {
+    
     const result = await account.deleteSession("current");
     return result;
+
   } catch (error) {
     console.error(error);
     return false;

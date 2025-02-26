@@ -80,7 +80,7 @@ export const ThemedInput: React.FC<TextInputProps & { className?: string }> = ({
 
   const { isDarkMode } = useTheme();
 
-  const viewClass = isDarkMode ? "border-neutral-700 bg-neutral-900" : "border-neutral-200 bg-neutral-50 ";
+  const viewClass = isDarkMode ? "border-neutral-800 bg-neutral-900" : "border-neutral-200 bg-neutral-50 ";
 
   return (
     <TextInput

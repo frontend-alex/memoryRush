@@ -158,3 +158,4 @@ export const gameSettingsCards: GameSettingsProps[] = [
     description: "A tough challenge with many cards to sort, test your skills to the max."
   }
 ];
+

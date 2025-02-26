@@ -1,20 +1,19 @@
 import React, { createContext, useContext, ReactNode } from "react";
-
 import { getCurrentUser } from "./appwrite";
 import { useAppwrite } from "@/hooks/useAppwrite";
-
-interface GlobalContextType {
-  isLogged: boolean;
-  user: User | null;
-  loading: boolean;
-  refetch: () => any;
-}
 
 interface User {
   $id: string;
   name: string;
   email: string;
-  avatar: string;
+  avatar?: string;
+}
+
+interface GlobalContextType {
+  isLogged: boolean;
+  user: User | null;
+  loading: boolean;
+  refetch: () => Promise<void>; 
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -29,30 +28,24 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     loading,
     refetch,
   } = useAppwrite({
-    fn: getCurrentUser,
+    fn: getCurrentUser
   });
 
   const isLogged = !!user;
 
   return (
-    <GlobalContext.Provider
-      value={{
-        isLogged,
-        user,
-        loading,
-        refetch,
-      }}
-    >
+    <GlobalContext.Provider value={{ isLogged, user, loading, refetch }}>
       {children}
     </GlobalContext.Provider>
   );
 };
 
+
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
-  if (!context)
+  if (!context) {
     throw new Error("useGlobalContext must be used within a GlobalProvider");
-
+  }
   return context;
 };
 

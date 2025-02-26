@@ -8,28 +8,49 @@ import {
   ThemedText,
   ThemedView,
 } from "@/components/ui/themed-components";
-import { Link, useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useGlobalContext } from "@/libs/global-provider";
+import { useNavigation } from "@react-navigation/native";
 import {
   Image,
   TouchableOpacity,
   View,
   Text,
   ScrollView,
-  FlatList,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import { gameSettingsCards } from "@/constants/data";
 import { GameSettingsProps } from "@/types/Types";
+import BackButton from "@/components/ui/goBackButton";
 
 const GameSettingsCard = ({
   color,
   description,
   levelName,
   numOfCards,
+  difficulty,
 }: GameSettingsProps) => {
+
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    Alert.alert(`Difficulty ${difficulty}`, "Are you sure?", [
+      {
+        text: "No",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => '',
+        style: "default",
+      },
+    ]);
+  };
+
   return (
     <View>
       <ThemedView className="flex-between-res gap-3 p-3 rounded-lg group">
@@ -49,17 +70,18 @@ const GameSettingsCard = ({
             </Text>
           </View>
         </View>
-        <Link href={`/game?cardId=${numOfCards}`}>
-          <TouchableOpacity className="py-1 flex-center rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none">
-            <Image tintColor={"white"} className="size-6" source={icons.play} />
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity
+          onPress={handlePress}
+          className="py-1 flex-center rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none"
+        >
+          <Image tintColor={"white"} className="size-6" source={icons.play} />
+        </TouchableOpacity>
       </ThemedView>
     </View>
   );
 };
 
-const Game = () => {
+const GameSettings = () => {
   const { user } = useGlobalContext();
   const router = useRouter();
 
@@ -80,12 +102,7 @@ const Game = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <FullSafeAreaScreen className="flex-col-5">
         <View className="flex flex-row items-center justify-between">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="p-2 rounded-full bg-rose-300"
-          >
-            <Image className="size-7" source={icons.chevronLeft} />
-          </TouchableOpacity>
+          <BackButton/>
           <ThemedText className="font-rubik-semibold">
             Choose Your Challenge
           </ThemedText>
@@ -96,7 +113,7 @@ const Game = () => {
         </ThemedText>
         <View className="relative">
           <ThemedInput
-            className="h-[52px] px-10 rounded-md text-[##8C8E98] border font-rubik-medium border-[#ff00400a]"
+            className="h-[52px] px-10 rounded-md text-[#8C8E98] border font-rubik-medium"
             placeholder="Search level"
             value={searchedText}
             onChangeText={handleSearch}
@@ -112,7 +129,9 @@ const Game = () => {
           contentContainerClassName="pb-64 flex-col-3"
         >
           {filteredItems.length === 0 ? (
-            <ThemedText className="text-lg font-rubik-bold">No matches found</ThemedText>
+            <ThemedText className="text-lg font-rubik-bold">
+              No matches found
+            </ThemedText>
           ) : (
             filteredItems.map((card: GameSettingsProps, idx) => (
               <GameSettingsCard {...card} key={idx} />
@@ -124,4 +143,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default GameSettings;
