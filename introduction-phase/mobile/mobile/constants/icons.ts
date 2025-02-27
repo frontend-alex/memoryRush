@@ -22,7 +22,9 @@ import filter from '@/assets/icons/sliders-horizontal.png'
 import play from '@/assets/icons/play.png'
 import githubWhite from '@/assets/icons/github-mark-white.png'
 import githubBlack from '@/assets/icons/github-mark.png'
-
+import swrod from '@/assets/icons/swords.png';
+import book from '@/assets/icons/book.png';
+import retry from '@/assets/icons/rotate-ccw.png';
 
 export default {
   googleIcon, 
@@ -49,4 +51,7 @@ export default {
   play,
   githubWhite,
   githubBlack,
+  book,
+  swrod,
+  retry
 }

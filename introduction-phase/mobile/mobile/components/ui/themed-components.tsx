@@ -1,9 +1,10 @@
 import React from "react";
 import { twMerge } from "tailwind-merge";
-import { Image, ImageProps, ImageSourcePropType, Text, TextProps, View, ViewProps, TextInput, TextInputProps  } from "react-native";
+import { Image, ImageProps, ImageSourcePropType, Text, TextProps, View, ViewProps, TextInput, TextInputProps, TouchableOpacity  } from "react-native";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { cn } from "@/libs/utils";
 import icons from "@/constants/icons";
+import { TouchableOpacityProps } from "react-native";
 
 //------------------------themed text -------------------------------//
 export const ThemedText: React.FC<TextProps & { className?: string }> = ({
@@ -47,7 +48,7 @@ export const ThemedBorder: React.FC<ViewProps & { className?: string }> = ({
 }) => {
   const { isDarkMode } = useTheme();
 
-  const viewClass = isDarkMode ? "border-neutral-800" : "border-neutral-200";
+  const viewClass = isDarkMode ? "border-neutral-800" : "border-neutral-100";
 
   return (
     <View className={twMerge('border w-1/3',viewClass, className)} {...props}>
@@ -80,7 +81,7 @@ export const ThemedInput: React.FC<TextInputProps & { className?: string }> = ({
 
   const { isDarkMode } = useTheme();
 
-  const viewClass = isDarkMode ? "border-neutral-800 bg-neutral-900" : "border-neutral-200 bg-neutral-50 ";
+  const viewClass = isDarkMode ? "border-neutral-800 bg-neutral-900" : "border-neutral-100 bg-neutral-50 ";
 
   return (
     <TextInput
@@ -88,6 +89,25 @@ export const ThemedInput: React.FC<TextInputProps & { className?: string }> = ({
       style={style}
       {...props}
     />
+  );
+};
+
+
+//------------------------themed button -------------------------------//
+export const ThemedTochableOpacity: React.FC<TouchableOpacityProps & { className?: string, children: React.ReactNode }> = ({children, className, style, ...props }) => {
+
+  const { isDarkMode } = useTheme();
+
+  const viewClass = isDarkMode ? "border-neutral-800 bg-neutral-800 shadow-zinc-800" : "border-neutral-200 bg-neutral-100 shadow-zinc-300";
+
+  return (
+    <TouchableOpacity
+      className={twMerge("box-border border rounded-3xl", className, viewClass,)}
+      style={style}
+      {...props}
+    >
+      {children}
+    </TouchableOpacity>
   );
 };
 

@@ -1,22 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
-import { Stack, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, usePathname, useRouter } from "expo-router";
 import { useGlobalContext } from "@/libs/global-provider";
 
 const AuthLayout = () => {
-  const { isLogged, loading } = useGlobalContext();
   const router = useRouter();
+  const pathname = usePathname();
+  const { isLogged, loading } = useGlobalContext();
+  const [redirected, setRedirected] = useState(false); 
 
   useEffect(() => {
-    if (isLogged) {
+    if (isLogged && pathname !== "/home" && !redirected) {
+      setRedirected(true); 
       router.replace("/home");
     }
-  }, [isLogged, router]);
+  }, [isLogged, pathname, redirected]);
 
   if (loading) {
     return <SplashScreen />;
   }
-
 
   return (
     <Stack>

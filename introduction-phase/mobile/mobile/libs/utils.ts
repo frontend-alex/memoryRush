@@ -3,6 +3,9 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge";
 
+import humanizeDuration from 'humanize-duration';
+import { Difficulty } from "@/types/Types";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -90,4 +93,34 @@ export const calculateScore = (
   return Math.round(finalScore * factor) / factor;
 };
 
+
+export const shortEnglishHumanizer = humanizeDuration.humanizer({
+  language: "shortEn",
+  languages: {
+    shortEn: {
+      y: () => "y",
+      mo: () => "mo",
+      w: () => "w",
+      d: () => "d",
+      h: () => "h",
+      m: () => "m",
+      s: () => "s",
+      ms: () => "ms",
+    },
+  },
+});
+
+
+export const getDifficultyColor = (difficulty: Difficulty ): string => {
+  switch (difficulty) {
+    case 'medium':
+      return '#fcd34d'; 
+    case 'hard':
+      return '#ef4444'; 
+    case 'easy':
+      return '#4ade80'; 
+    default:
+      return '#000000'; 
+  }
+};
 

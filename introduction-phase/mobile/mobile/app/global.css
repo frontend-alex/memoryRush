@@ -129,5 +129,5 @@ a {
 }
 
 .button{
-  @apply bg-rose-500 shadow-md shadow-zinc-300 rounded-full w-full py-3 text-white flex-center dark:shadow-zinc-800
+  @apply bg-rose-500 border-rose-500 shadow-md rounded-full py-3 text-white flex-center 
 }

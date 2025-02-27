@@ -3,8 +3,6 @@ import images from "@/constants/images";
 import React, { useRef, useEffect } from "react";
 import { Animated, Pressable, View, Image, StyleSheet, ViewStyle } from "react-native";
 
-
-
 const GameCard = ({
   id,
   name,
@@ -12,12 +10,14 @@ const GameCard = ({
   matched,
   preFlip,
   clicked,
+  cardCount
 }: {
   id: number;
   name: string;
   flipped: boolean;
   matched: boolean;
   preFlip: boolean;
+  cardCount: number,
   clicked: (name: string, id: number) => void;
 }) => {
   const flipAnim = useRef(new Animated.Value(flipped || preFlip ? 1 : 0)).current;
@@ -25,33 +25,38 @@ const GameCard = ({
   useEffect(() => {
     Animated.timing(flipAnim, {
       toValue: flipped || preFlip ? 1 : 0,
-      duration: 500,
+      duration: 750,
       useNativeDriver: true,
     }).start();
   }, [flipped, preFlip]);
 
   const frontInterpolate = flipAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["180deg", "0deg"], // Front starts flipped, rotates to 0deg
+    outputRange: ["180deg", "0deg"], 
   });
 
   const backInterpolate = flipAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["0deg", "180deg"], // Back starts at 0deg, rotates to 180deg
+    outputRange: ["0deg", "180deg"],
   });
+
+  const cardStyle = {
+    margin: 5,
+    height: cardCount >= 15 ? 80 : 100,
+    flex: 1,
+    perspective: 1000 as unknown as ViewStyle["perspective"], 
+}
 
   return (
     <Pressable
       onPress={() => (!flipped && !matched ? clicked(name, id) : undefined)}
-      style={styles.card}
+      style={[cardStyle]}
     >
       <View style={styles.innerCard}>
-        {/* Back of the Card */}
-        <Animated.View className="border border-neutral-100" style={[styles.side, { transform: [{ rotateY: backInterpolate }] }]}>
-          <Image source={images.questionMark} style={styles.image} />
+        <Animated.View className="bg-neutral-50 border border-neutral-100 dark:border-neutral-800" style={[styles.side, { transform: [{ rotateY: backInterpolate }] }]}>
+          <Image source={images.questionMark} style={styles.imageQuestionmark} />
         </Animated.View>
 
-        {/* Front of the Card */}
         <Animated.View style={[styles.side, styles.front, { transform: [{ rotateY: frontInterpolate }] }]}>
           <Image source={cardImages[name]} style={styles.image} />
         </Animated.View>
@@ -60,13 +65,9 @@ const GameCard = ({
   );
 };
 
+
+
 const styles = StyleSheet.create({
-  card: {
-    margin: 5,
-    height: 100,
-    flex: 1,
-    perspective: 1000 as unknown as ViewStyle["perspective"], // Perspective to create a 3D effect
-  },
   innerCard: {
     width: "100%",
     height: "100%",
@@ -85,10 +86,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   image: {
-    width: "80%",
-    height: "80%",
+    width: "100%",
+    height: "100%",
     resizeMode: "contain",
   },
+  imageQuestionmark: {
+    width: "50%",
+    height: "100%",
+    resizeMode: "contain",
+  }
 });
 
 export default GameCard;

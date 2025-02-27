@@ -81,10 +81,20 @@ const LoggedLayout = () => {
       <Tabs.Screen
         name="game-settings"
         options={{
-          title: "Games",
+          title: "Story Mode",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon={icons.gamepad} focused={focused} title="Games" />
+            <TabIcon icon={icons.book} focused={focused} title="Story Mode" />
+          ),
+        }}
+      />
+       <Tabs.Screen
+        name="multiplayer"
+        options={{
+          title: "Mutliplayer",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon={icons.swrod} focused={focused} title="Multiplayer" />
           ),
         }}
       />

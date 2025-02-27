@@ -1,125 +1,77 @@
+import useGame from "@/hooks/useGame";
 import GameCard from "@/components/cards/GameCard";
 import BackButton from "@/components/ui/goBackButton";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
-import { useEffect, useState } from "react";
-import { generateCards, shuffle } from "@/libs/utils";
-import { CardProps, FlippedCardProps } from "@/types/Types";
-
-import { View, FlatList } from "react-native";
+import {  FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import { shortEnglishHumanizer } from "@/libs/utils";
 import { ThemedText } from "@/components/ui/themed-components";
 
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+
 const Level = () => {
-  const { userChoice, levelName } = useLocalSearchParams();
-  
+  const { userChoice, levelName, levelId } = useLocalSearchParams();
+
   const cardCount = Number(userChoice);
-  const cards: string[] = generateCards(cardCount);
 
-  const [preFlip, setPreFlip] = useState(true);
-  const [cardList, setCardList] = useState<CardProps[]>(() =>
-    shuffle(cards).map((name, index) => ({
-      id: index,
-      name,
-      flipped: false,
-      matched: false,
-    }))
-  );
-  const [gameOver, setGameOver] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [flippedCards, setFlippedCards] = useState<FlippedCardProps[]>([]);
+  const { state, handleClick } = useGame(cardCount, levelId, levelName);
 
-  useEffect(() => {
-    let timerInterval: NodeJS.Timeout | null = null;
-
-    if (!gameOver) {
-      timerInterval = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1000);
-      }, 1000);
-    } else {
-      if (timerInterval) clearInterval(timerInterval);
-    }
-
-    return () => {
-      if (timerInterval) clearInterval(timerInterval);
-    };
-  }, [gameOver]);
-
-  const handleClick = (name: string, index: number) => {
-    if (flippedCards.length === 2) return;
-
-    const currentCard: FlippedCardProps = { name, index };
-    const updatedCards = cardList.map((card) =>
-      card.id === index ? { ...card, flipped: true } : card
-    );
-
-    const updatedFlipped = [...flippedCards, currentCard];
-    setFlippedCards(updatedFlipped);
-    setCardList(updatedCards);
-
-    if (updatedFlipped.length === 2) {
-      setTimeout(() => check(updatedFlipped), 750);
-    }
-  };
-
-  const check = (flipped: FlippedCardProps[]) => {
-    if (flipped.length < 2) return;
-
-    const [firstCard, secondCard] = flipped;
-    setCardList((prevCards) =>
-      prevCards.map((card) => {
-        if (card.id === firstCard.index || card.id === secondCard.index) {
-          return {
-            ...card,
-            matched: firstCard.name === secondCard.name,
-            flipped: firstCard.name === secondCard.name,
-          };
-        }
-        return card;
-      })
-    );
-    setFlippedCards([]);
-  };
-
-  useEffect(() => {
-    setTimeout(() => setPreFlip(false), 1000);
-  }, []);
-
-  useEffect(() => {
-    const isGameOver = cardList.every((card) => card.matched);
-    setGameOver(isGameOver);
-  }, [cardList, elapsedTime, userChoice]);
-
-  const getNumColumns = () => {
-    if (cardCount >= 15) return 7;
-    if (cardCount>= 10) return 5; 
-    return 4; 
-  };
+  const getNumColumns = () => (cardCount >= 10 ? 5 : 4);
 
   return (
     <FullSafeAreaScreen className="flex-col-5">
-      <View className="flex flex-row justify-between items-center">
-        <BackButton className="w-max" />
-        <ThemedText className="font-rubik-semibold">{levelName}</ThemedText>
-        <View />
-      </View>
-      <View>
-        <FlatList
-          data={cardList}
-          numColumns={getNumColumns()} 
-          keyExtractor={(card) => card.id.toString()}
-          renderItem={({ item }) => (
-            <GameCard
-              id={item.id}
-              name={item.name}
-              flipped={item.flipped}
-              matched={item.matched}
-              preFlip={preFlip}
-              clicked={flippedCards.length === 2 ? () => {} : handleClick}
+      {/* Fullscreen Countdown */}
+      {state.countdown > 0 ? (
+        <Animated.View 
+          entering={FadeIn.duration(500)} 
+          exiting={FadeOut.duration(500)}
+          className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center"
+        >
+          <ThemedText className="font-rubik-bold text-8xl">
+            {state.countdown}
+          </ThemedText>
+        </Animated.View>
+      ) : (
+        <>
+          <Animated.View className="flex flex-row items-center justify-between">
+            <BackButton
+              unsavedChanges={true}
+              className="w-max"
+              path={"/game-settings"}
             />
-          )}
-        />
-      </View>
+            <ThemedText className="font-rubik-semibold text-center">
+              {levelName}
+            </ThemedText>
+            <ThemedText className="font-rubik-semibold w-max">
+              {shortEnglishHumanizer(state.elapsedTime)}
+            </ThemedText>
+          </Animated.View>
+
+          <Animated.View className="h-[80%]">
+            <FlatList
+              data={state.cardList}
+              numColumns={getNumColumns()}
+              keyExtractor={(card) => card.id.toString()}
+              renderItem={({ item }) => (
+                <GameCard
+                  id={item.id}
+                  cardCount={cardCount}
+                  name={item.name}
+                  flipped={item.flipped}
+                  matched={item.matched}
+                  preFlip={state.preFlip}
+                  clicked={
+                    state.flippedCards.length === 2
+                      ? () => {}
+                      : () => handleClick(item.name, item.id)
+                  }
+                />
+              )}
+            />
+          </Animated.View>
+        </>
+      )}
     </FullSafeAreaScreen>
   );
 };

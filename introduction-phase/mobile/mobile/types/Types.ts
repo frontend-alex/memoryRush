@@ -7,16 +7,17 @@ interface LoginInputsProps {
   icon: ImageSourcePropType;
 }
 
-type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = "easy" | "medium" | "hard";
 
 interface GameSettingsProps {
-  id: number
-  difficulty: Difficulty;
-  color: string;
-  levelName: string;
+  id: string;
+  difficulty: Difficulty; 
+  name: string;
   numOfCards: number;
-  description: string;
+  description: string; 
+  bestPlayerId: string | null; 
 };
+
 
 
 interface CardProps {

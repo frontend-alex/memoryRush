@@ -1,4 +1,3 @@
-import {  } from "@react-navigation/native";
 import { Slot } from "expo-router";
 
 
