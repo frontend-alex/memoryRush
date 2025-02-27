@@ -34,6 +34,8 @@ const GameSettingsCard = ({
   difficulty,
 }: GameSettingsProps) => {
 
+  //stomp client hooks / client 
+
   const navigation = useNavigation();
 
   const handlePress = () => {
@@ -45,7 +47,7 @@ const GameSettingsCard = ({
       },
       {
         text: "Yes",
-        onPress: () => '',
+        onPress: () => router.push(`/level?userChoice=${numOfCards}&levelName=${levelName}`),
         style: "default",
       },
     ]);

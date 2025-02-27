@@ -87,6 +87,36 @@ export const availableCards: string[] = [
   "tree", "tree"
 ];
 
+export const cardImages: Record<string, any> = {
+  bell: require("@/assets/images/bell.png"),
+  icon: require("@/assets/images/icon.png"),
+  kiss: require("@/assets/images/kiss.png"),
+  landingpage: require("@/assets/images/landingpage.png"),
+  lightbulb: require("@/assets/images/lightbulb.png"),
+  "loading-image": require("@/assets/images/loading-image.png"),
+  lotus: require("@/assets/images/lotus.png"),
+  magnet: require("@/assets/images/magnet.png"),
+  money: require("@/assets/images/money.png"),
+  owl: require("@/assets/images/owl.png"),
+  questionmark: require("@/assets/images/questionmark.png"),
+  rain: require("@/assets/images/rain.png"),
+  salaryman: require("@/assets/images/salaryman.png"),
+  schoolgirl: require("@/assets/images/schoolgirl.png"),
+  ship: require("@/assets/images/ship.png"),
+  soccer: require("@/assets/images/soccer.png"),
+  "splash-icon": require("@/assets/images/splash-icon.png"),
+  squirrel: require("@/assets/images/squirrel.png"),
+  strength: require("@/assets/images/strength.png"),
+  sun: require("@/assets/images/sun.png"),
+  sunset: require("@/assets/images/sunset.png"),
+  superhero: require("@/assets/images/superhero.png"),
+  swimming: require("@/assets/images/swimming.png"),
+  thanks: require("@/assets/images/thanks.png"),
+  tree: require("@/assets/images/tree.png"),
+};
+
+
+
 
 export const SortCards = (setCards: React.Dispatch<React.SetStateAction<any[]>>) => [
     {
