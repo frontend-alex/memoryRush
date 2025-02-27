@@ -25,7 +25,7 @@ const GameCard = ({
   useEffect(() => {
     Animated.timing(flipAnim, {
       toValue: flipped || preFlip ? 1 : 0,
-      duration: 750,
+      duration: 350,
       useNativeDriver: true,
     }).start();
   }, [flipped, preFlip]);

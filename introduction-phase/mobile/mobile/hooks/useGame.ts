@@ -73,7 +73,7 @@ const useGame = (
         score,
       };
       const callApi = async () => {
-        const response = await saveGameData(gameDetails);
+        const response = await saveGameData(levelId, gameDetails);
         if (response)
           router.push(
             `/level-done?levelId=${levelId}&userChoice=${cardCount}&levelName=${levelName}`

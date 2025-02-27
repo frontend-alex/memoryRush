@@ -136,6 +136,24 @@ export async function getCurrentUser() {
   }
 }
 
+export async function getGamesByUserId() {
+  try {
+    const user = await account.get();
+
+    if (user.$id) {
+      const response = await databases.listDocuments(
+        config.databaseId!,
+        config.userGamesCollectionId!,
+        [Query.equal("userId", user.$id)]
+      );
+
+      return response;
+    }
+  } catch (error) {
+    console.error("Error fetching user documents:", error);
+  }
+}
+
 export async function getAllLevel() {
   try {
     const response = await databases.listDocuments(
@@ -152,7 +170,7 @@ export async function getLevelById(params: { id: string }) {
   try {
     const { id } = params;
 
-    console.log(params)
+    console.log(params);
 
     const response = await databases.getDocument(
       config.databaseId!,
@@ -167,21 +185,18 @@ export async function getLevelById(params: { id: string }) {
 }
 
 export const saveGameData = async (
+  levelId: string | string [], 
   gameDetails: { timeTaken: number; score: number; bestScore: number }
 ) => {
   try {
-    const user = await account.get(); 
+    const user = await account.get();
     const userId = user.$id;
-
     const { timeTaken, score } = gameDetails;
 
     const response = await databases.listDocuments(
       config.databaseId!,
       config.userGamesCollectionId!,
-      [
-        Query.equal("userId", userId),
-        // Query.equal("levelId", levelId),
-      ]
+      [Query.equal("userId", userId), Query.equal("levelId", levelId)]
     );
 
     if (response.documents.length > 0) {
@@ -200,25 +215,23 @@ export const saveGameData = async (
         }
       );
 
-      return res
+      return res;
     } else {
       const res = await databases.createDocument(
         config.databaseId!,
         config.userGamesCollectionId!,
         ID.unique(),
         {
-          userId, 
-          // levelId,
+          userId,
+          levelId, 
           timeTaken,
           score,
-          bestScore: score, 
+          bestScore: score,
         }
       );
-      return res 
+      return res;
     }
   } catch (error) {
     console.error("Error saving game data:", error);
   }
 };
-
-
