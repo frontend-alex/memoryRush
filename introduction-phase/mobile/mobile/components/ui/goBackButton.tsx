@@ -3,15 +3,24 @@ import icons from "@/constants/icons";
 
 import { cn } from "@/libs/utils";
 import { TouchableOpacity, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 const BackButton = ({ className }: { className?: string }) => {
-  const navigation = useNavigation();
+
+  const router = useRouter();
+  
+  const handleGoBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.push("/home"); 
+    }
+  };
 
   return (
     <TouchableOpacity
       className={cn("p-2 rounded-full bg-rose-300 w-max", className)}
-      onPress={() => navigation.goBack()}
+      onPress={handleGoBack}
     >
       <Image className="size-7" source={icons.chevronLeft} />
     </TouchableOpacity>

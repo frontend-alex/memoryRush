@@ -26,65 +26,66 @@ import { gameSettingsCards } from "@/constants/data";
 import { GameSettingsProps } from "@/types/Types";
 import BackButton from "@/components/ui/goBackButton";
 
-const GameSettingsCard = ({
-  color,
-  description,
-  levelName,
-  numOfCards,
-  difficulty,
-}: GameSettingsProps) => {
+const GameSettingsCard = React.memo(
+  ({
+    color,
+    description,
+    levelName,
+    numOfCards,
+    difficulty,
+  }: GameSettingsProps) => {
+    const handlePress = () => {
+      Alert.alert(`Difficulty ${difficulty}`, "Are you sure?", [
+        {
+          text: "No",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () =>
+            router.push(
+              `/level?userChoice=${numOfCards}&levelName=${levelName}`
+            ),
+          style: "default",
+        },
+      ]);
+    };
 
-  const navigation = useNavigation();
-
-  const handlePress = () => {
-    Alert.alert(`Difficulty ${difficulty}`, "Are you sure?", [
-      {
-        text: "No",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        onPress: () => '',
-        style: "default",
-      },
-    ]);
-  };
-
-  return (
-    <View>
-      <ThemedView className="flex-between-res gap-3 p-3 rounded-lg group">
-        <View className="flex flex-row gap-3 w-full ">
-          <View
-            style={{ backgroundColor: color }}
-            className="w-[5px] h-[70px] rounded-lg"
-          />
-          <View className="flex-col-1">
-            <ThemedText className="text-lg font-rubik-bold">
-              {levelName}
-            </ThemedText>
-            <Text className="text-stone-400 max-w-[250px]">{description}</Text>
-            <Text className="text-stone-400">
-              Number of cards:{" "}
-              <Text className="font-rubik-bold">{numOfCards}</Text>
-            </Text>
+    return (
+      <View>
+        <ThemedView className="flex-between-res gap-3 p-3 rounded-lg group">
+          <View className="flex flex-row gap-3 w-full ">
+            <View
+              style={{ backgroundColor: color }}
+              className="w-[5px] h-[70px] rounded-lg"
+            />
+            <View className="flex-col-1">
+              <ThemedText className="text-lg font-rubik-bold">
+                {levelName}
+              </ThemedText>
+              <Text className="text-stone-400 max-w-[250px]">
+                {description}
+              </Text>
+              <Text className="text-stone-400">
+                Number of cards:{" "}
+                <Text className="font-rubik-bold">{numOfCards}</Text>
+              </Text>
+            </View>
           </View>
-        </View>
-        <TouchableOpacity
-          onPress={handlePress}
-          className="py-1 flex-center rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none"
-        >
-          <Image tintColor={"white"} className="size-6" source={icons.play} />
-        </TouchableOpacity>
-      </ThemedView>
-    </View>
-  );
-};
+          <TouchableOpacity
+            onPress={handlePress}
+            className="py-1 flex-center rounded-full w-[100px] bg-rose-500 hover:bg-rose-600 border-none"
+          >
+            <Image tintColor={"white"} className="size-6" source={icons.play} />
+          </TouchableOpacity>
+        </ThemedView>
+      </View>
+    );
+  }
+);
 
 const GameSettings = () => {
-  const { user } = useGlobalContext();
-  const router = useRouter();
-
   const [cards, setCards] = useState<GameSettingsProps[]>(gameSettingsCards);
   const [searchedText, setSearchedText] = useState("");
   const [filteredItems, setFilteredItems] = useState(cards);
@@ -99,18 +100,18 @@ const GameSettings = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <FullSafeAreaScreen className="flex-col-5">
-        <View className="flex flex-row items-center justify-between">
-          <BackButton/>
-          <ThemedText className="font-rubik-semibold">
-            Choose Your Challenge
-          </ThemedText>
-          <ThemedIcon icon={icons.bell} />
-        </View>
-        <ThemedText className="font-rubik-bold text-2xl">
-          Game Settings
+    <FullSafeAreaScreen className="flex-col-5">
+      <View className="flex flex-row items-center justify-between">
+        <BackButton />
+        <ThemedText className="font-rubik-semibold">
+          Choose Your Challenge
         </ThemedText>
+        <ThemedIcon icon={icons.bell} />
+      </View>
+      <ThemedText className="font-rubik-bold text-2xl">
+        Game Settings
+      </ThemedText>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="relative">
           <ThemedInput
             className="h-[52px] px-10 rounded-md text-[#8C8E98] border font-rubik-medium"
@@ -124,22 +125,23 @@ const GameSettings = () => {
             source={icons.search}
           />
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerClassName="pb-64 flex-col-3"
-        >
-          {filteredItems.length === 0 ? (
-            <ThemedText className="text-lg font-rubik-bold">
-              No matches found
-            </ThemedText>
-          ) : (
-            filteredItems.map((card: GameSettingsProps, idx) => (
-              <GameSettingsCard {...card} key={idx} />
-            ))
-          )}
-        </ScrollView>
-      </FullSafeAreaScreen>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-64 flex-col-3"
+      >
+        {filteredItems.length === 0 ? (
+          <ThemedText className="text-lg font-rubik-bold">
+            No matches found
+          </ThemedText>
+        ) : (
+          filteredItems.map((card: GameSettingsProps, idx) => (
+            <GameSettingsCard {...card} key={idx} />
+          ))
+        )}
+      </ScrollView>
+    </FullSafeAreaScreen>
   );
 };
 
