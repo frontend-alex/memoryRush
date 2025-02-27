@@ -1,22 +1,22 @@
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 import BackButton from "@/components/ui/goBackButton";
 
-import { useEffect, useState } from "react";
-import { generateCards, shuffle } from "@/libs/utils";
-import { CardProps, FlippedCardProps } from "@/types/Types";
-
-import { View, FlatList } from "react-native";
-import { useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ui/themed-components";
-import GameCard from "@/components/cards/FlipCard";
+import { gameSettingsCards } from "@/constants/data";
+import { calculateScore, generateCards, shuffle } from "@/libs/utils";
+import { CardProps, FlippedCardProps, RootStackParamList } from "@/types/Types";
+import { RouteProp } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
-const Level = () => {
-  const { userChoice, levelName } = useLocalSearchParams();
-  
-  const cardCount = Number(userChoice);
-  const cards: string[] = generateCards(cardCount);
+import { View } from "react-native";
+
+
+const level = () => {
+  const cards: string[] = generateCards(6);
 
   const [preFlip, setPreFlip] = useState(true);
+
   const [cardList, setCardList] = useState<CardProps[]>(() =>
     shuffle(cards).map((name, index) => ({
       id: index,
@@ -25,9 +25,31 @@ const Level = () => {
       matched: false,
     }))
   );
-  const [gameOver, setGameOver] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [flippedCards, setFlippedCards] = useState<FlippedCardProps[]>([]);
+
+  const [bestTime, setBestTime] = useState<number | null>(() => {
+    const savedTime = localStorage.getItem(`highscore-${6}`);
+    return savedTime ? Number(savedTime) : null;
+  });
+
+  const [overallBestTime, setOverallBestTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    const allLevelTimes: number[] = [];
+    for (let i = 1; i <= gameSettingsCards.length; i++) {
+      const levelTime = localStorage.getItem(`highscore-${i}`);
+      if (levelTime) {
+        allLevelTimes.push(Number(levelTime));
+      }
+    }
+
+    if (allLevelTimes.length > 0) {
+      setOverallBestTime(Math.min(...allLevelTimes));
+    }
+  }, []);
 
   useEffect(() => {
     let timerInterval: NodeJS.Timeout | null = null;
@@ -49,16 +71,20 @@ const Level = () => {
     if (flippedCards.length === 2) return;
 
     const currentCard: FlippedCardProps = { name, index };
+
     const updatedCards = cardList.map((card) =>
       card.id === index ? { ...card, flipped: true } : card
     );
 
     const updatedFlipped = [...flippedCards, currentCard];
+
     setFlippedCards(updatedFlipped);
     setCardList(updatedCards);
 
     if (updatedFlipped.length === 2) {
-      setTimeout(() => check(updatedFlipped), 750);
+      setTimeout(() => {
+        check(updatedFlipped);
+      }, 750);
     }
   };
 
@@ -66,18 +92,20 @@ const Level = () => {
     if (flipped.length < 2) return;
 
     const [firstCard, secondCard] = flipped;
+
     setCardList((prevCards) =>
       prevCards.map((card) => {
         if (card.id === firstCard.index || card.id === secondCard.index) {
           return {
             ...card,
             matched: firstCard.name === secondCard.name,
-            flipped: firstCard.name === secondCard.name,
+            flipped: firstCard.name === secondCard.name ? true : false,
           };
         }
         return card;
       })
     );
+
     setFlippedCards([]);
   };
 
@@ -88,40 +116,35 @@ const Level = () => {
   useEffect(() => {
     const isGameOver = cardList.every((card) => card.matched);
     setGameOver(isGameOver);
-  }, [cardList, elapsedTime, userChoice]);
 
-  const getNumColumns = () => {
-    if (cardCount >= 15) return 7; // 6 or 7 columns when userChoice is greater than 15
-    if (cardCount>= 10) return 5; // 5 columns when userChoice is greater than 10
-    return 4; // default 4 columns
-  };
+    if (isGameOver) {
+      const newScore = calculateScore(elapsedTime, { allowBonus: true });
+      if (!bestTime || newScore > bestTime) {
+        setBestTime(newScore);
+        localStorage.setItem(`highscore-${6}`, String(newScore));
+      }
+    }
+  }, [cardList, elapsedTime, bestTime, 6]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   return (
-    <FullSafeAreaScreen className="flex-col-5">
-      <View className="flex flex-row justify-between items-center">
+    <FullSafeAreaScreen>
+      <View className="flex items-start justify-start">
         <BackButton className="w-max" />
-        <ThemedText className="font-rubik-semibold">{levelName}</ThemedText>
-        <View />
-      </View>
-      <View>
-        <FlatList
-          data={cardList}
-          numColumns={getNumColumns()} 
-          keyExtractor={(card) => card.id.toString()}
-          renderItem={({ item }) => (
-            <GameCard
-              id={item.id}
-              name={item.name}
-              flipped={item.flipped}
-              matched={item.matched}
-              preFlip={preFlip}
-              clicked={flippedCards.length === 2 ? () => {} : handleClick}
-            />
-          )}
-        />
       </View>
     </FullSafeAreaScreen>
   );
 };
 
-export default Level;
+export default level;
