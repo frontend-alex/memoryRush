@@ -2,7 +2,7 @@ import React from "react";
 import icons from "@/constants/icons";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
-import { Dimensions, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { ThemedIcon, ThemedText } from "@/components/ui/themed-components";
 import { useGlobalContext } from "@/libs/global-provider";
 import { getGreeting } from "@/libs/utils";
@@ -13,7 +13,6 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 const Home = () => {
   const { user } = useGlobalContext();
-  const screenWidth = Dimensions.get("window").width;
 
   const { data: allLevels, loading, error } = useAppwrite({ fn: getAllLevel });
   const { data: completedLevels } = useAppwrite({ fn: getGamesByUserId });
@@ -59,13 +58,10 @@ const Home = () => {
             size={80}
             width={13}
             fill={completionPercentage}
-            onAnimationComplete={() => console.log("onAnimationComplete")}
             backgroundColor="#ca8a04"
           />
         </View>
       </View>
-
-     
     </FullSafeAreaScreen>
   );
 };
