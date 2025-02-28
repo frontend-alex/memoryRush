@@ -1,9 +1,10 @@
+import humanizeDuration from 'humanize-duration';
+
 import { availableCards } from "@/constants/data";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge";
 
-import humanizeDuration from 'humanize-duration';
 import { Difficulty } from "@/types/Types";
 
 export function cn(...inputs: ClassValue[]) {

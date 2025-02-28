@@ -5,7 +5,6 @@ import {
   ThemedBorder,
   ThemedIcon,
   ThemedText,
-  ThemedView,
 } from "@/components/ui/themed-components";
 import { useGlobalContext } from "@/libs/global-provider";
 import {

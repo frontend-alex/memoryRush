@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import React, { useEffect, useState } from "react";
 import { Stack, usePathname, useRouter } from "expo-router";
 import { useGlobalContext } from "@/libs/global-provider";
 

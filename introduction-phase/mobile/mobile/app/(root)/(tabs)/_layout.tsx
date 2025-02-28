@@ -79,7 +79,7 @@ const LoggedLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="game-settings"
+        name="story-mode"
         options={{
           title: "Story Mode",
           headerShown: false,

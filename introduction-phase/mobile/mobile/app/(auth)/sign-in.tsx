@@ -22,7 +22,6 @@ import { useGlobalContext } from "@/libs/global-provider";
 import Logo from "@/components/ui/logo";
 import icons from "@/constants/icons";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
-import { useTheme } from "@/contexts/ThemeProvider";
 import { OAuthProvider } from "react-native-appwrite";
 
 interface FormDataProps {
@@ -51,7 +50,7 @@ const InitialPage = () => {
 
   const { refetch, loading, isLogged } = useGlobalContext();
 
-  if (!loading && isLogged) return <Redirect href="/" />;
+  if (!loading && isLogged) return <Redirect href="/home" />;
 
   const handleGoogleLogin = async () => {
     const result = await loginWithProvider(OAuthProvider.Google);
