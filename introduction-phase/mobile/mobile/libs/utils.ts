@@ -138,3 +138,24 @@ export const getGreeting = () => {
     return "Good night";
   }
 };
+
+
+interface Level {
+  $id: string;
+  name: string;
+  description: string;
+  difficulty: string;
+  numOfCards: number;
+  bestPlayerId: string | null;
+  [key: string]: any; 
+}
+
+export const getNextLevel = (levels: Level[], currentId: string): Level  => {
+  const currentIndex = levels.findIndex(level => level.$id === currentId);
+
+  if (currentIndex === levels.length - 1) {
+    return levels[currentIndex - 1];
+  }
+
+  return levels[currentIndex + 1];
+};

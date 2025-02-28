@@ -8,7 +8,7 @@ import AnimatedSplashScreen from "@/components/AnimatedSplashScreen";
 
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { getLevelById } from "@/libs/appwrite";
+import { getAllLevel, getLevelById } from "@/libs/appwrite";
 import { useTheme } from "@/contexts/ThemeProvider";
 import { Alert, Image, Text, View } from "react-native";
 import {
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/themed-components";
 
 import Animated, { FadeIn } from "react-native-reanimated";
+import { getNextLevel } from "@/libs/utils";
+import SplashScreen from "@/components/SplashScreen";
 
 const LevelDone = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -30,12 +32,11 @@ const LevelDone = () => {
   }: { levelId: string; levelName: string; userChoice: string } =
     useLocalSearchParams();
 
-  const { data, loading, error } = useAppwrite({
-    fn: getLevelById,
-    params: {
-      id: levelId,
-    },
-  });
+    const { data, loading } = useAppwrite({ fn : getAllLevel })
+
+    if(loading) return <SplashScreen/>
+
+    const nextLevel = getNextLevel(data?.documents, levelId)
 
   const handlePress = () => {
     Alert.alert(`Retry?`, "Are you sure you want to try again?", [
@@ -105,7 +106,7 @@ const LevelDone = () => {
 
           <ThemedTochableOpacity
             className="button flex w-2/3"
-            onPress={() => router.push("/game-settings")}
+            onPress={() => router.push(`/level?userChoice=${nextLevel.numOfCards}&levelName=${nextLevel.name}&levelId=${nextLevel.$id}`)}
           >
             <View className="flex flex-row items-center gap-3">
               <Text className="text-white">Continue</Text>
