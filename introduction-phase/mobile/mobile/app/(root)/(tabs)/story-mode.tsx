@@ -20,10 +20,10 @@ import GameSettingsCard from "@/components/cards/GameSettingCard";
 
 import { useAppwrite } from "@/hooks/useAppwrite";
 import { getAllLevel } from "@/libs/appwrite";
-import { CardProps, GameSettingsProps } from "@/types/Types";
+import { GameSettingsProps } from "@/types/Types";
 
 const GameSettings = () => {
-  const { data, loading, error } = useAppwrite({ fn: getAllLevel });
+  const { data, loading } = useAppwrite({ fn: getAllLevel });
 
   const [cards, setCards] = useState<GameSettingsProps[]>([]);
   const [searchedText, setSearchedText] = useState("");

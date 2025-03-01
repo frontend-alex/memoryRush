@@ -1,6 +1,9 @@
-import { Linking } from "react-native";
 import icons from "./icons";
-import { GameSettingsProps, LoginInputsProps } from "@/types/Types";
+
+import { Linking } from "react-native";
+import { LoginInputsProps } from "@/types/Types";
+
+export const URL = 'http://192.168.2.9:3000'
 
 export const LoginInputs = (togglePassword: boolean): LoginInputsProps[] => [
   {
@@ -138,3 +141,42 @@ export const SortCards = (setCards: React.Dispatch<React.SetStateAction<any[]>>)
   ];
 
 
+
+
+  export const createGameButtons = [
+    {
+      name: 2,
+      id: 0
+    }, 
+    {
+      name: 3,
+      id: 1
+    },
+    {
+      name: 4,
+      id: 2
+    }
+  ]
+
+  export const createGameCardsButtons = [
+    {
+      name: 15,
+      id: 0
+    }, 
+    {
+      name: 20,
+      id: 1
+    },
+    {
+      name: 25,
+      id: 3
+    },
+    {
+      name: 30,
+      id: 4
+    },
+    {
+      name: 40,
+      id: 5
+    }
+  ]

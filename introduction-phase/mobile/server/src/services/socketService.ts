@@ -6,17 +6,24 @@ import {
   getRoom,
   flipCard,
   endGame,
+  getAvailableRooms,
 } from './gameService';
 
 export const socketService = (io: Server) => {
   io.on('connection', (socket: Socket) => {
+    
     console.log('a user connected');
 
-    socket.on('createRoom', () => {
-      const roomId = createRoom(socket.id);
-      socket.join(roomId);
-      socket.emit('roomCreated', roomId);
+    socket.on('getAvailableRooms', () => {
+      const availableRooms = getAvailableRooms();
+      socket.emit('availableRooms', availableRooms);
     });
+
+    // socket.on('createRoom', () => {
+    //   const roomId = createRoom(socket.id, userChoice);
+    //   socket.join(roomId);
+    //   socket.emit('roomCreated', roomId);
+    // });
 
     socket.on('joinRoom', (roomId: string) => {
       const success = joinRoom(roomId, socket.id);

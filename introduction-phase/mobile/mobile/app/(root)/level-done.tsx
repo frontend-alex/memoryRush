@@ -4,13 +4,13 @@ import BackButton from "@/components/ui/goBackButton";
 
 import icons from "@/constants/icons";
 import LottieView from "lottie-react-native";
-import AnimatedSplashScreen from "@/components/AnimatedSplashScreen";
+import SplashScreen from "@/components/SplashScreen";
 
-import { router, useLocalSearchParams } from "expo-router";
+import { getAllLevel } from "@/libs/appwrite";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { getAllLevel, getLevelById } from "@/libs/appwrite";
-import { useTheme } from "@/contexts/ThemeProvider";
+import { router, useLocalSearchParams } from "expo-router";
 import { Alert, Image, Text, View } from "react-native";
+import { useTheme } from "@/contexts/ThemeProvider";
 import {
   ThemedText,
   ThemedTochableOpacity,
@@ -18,7 +18,6 @@ import {
 
 import Animated, { FadeIn } from "react-native-reanimated";
 import { getNextLevel } from "@/libs/utils";
-import SplashScreen from "@/components/SplashScreen";
 
 const LevelDone = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);

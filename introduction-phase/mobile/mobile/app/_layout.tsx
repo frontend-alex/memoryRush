@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetProvider } from "@/contexts/BottomSheetContext";
 
 export default function Rootlayout() {
   const [fontsLoaded] = useFonts({
@@ -30,7 +32,11 @@ export default function Rootlayout() {
   return (
     <GlobalProvider>
       <ThemeProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <GestureHandlerRootView>
+          <BottomSheetProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+          </BottomSheetProvider>
+        </GestureHandlerRootView>
       </ThemeProvider>
     </GlobalProvider>
   );

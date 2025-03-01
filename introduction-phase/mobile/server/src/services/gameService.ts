@@ -4,9 +4,10 @@ import { saveGameResult } from './databaseService';
 
 const rooms: { [key: string]: Room } = {};
 
-export const createRoom = (playerId: string): string => {
+export const createRoom = (playerId: string, userChoice: number, maxPlayers: number): string => {
   const roomId = `room_${Math.random().toString(36).substr(2, 9)}`;
-  const cards = shuffle(generateCards(12)).map((name, index) => ({
+  
+  const cards = shuffle(generateCards(userChoice)).map((name, index) => ({
     id: index,
     name,
     flipped: false,
@@ -15,15 +16,19 @@ export const createRoom = (playerId: string): string => {
 
   rooms[roomId] = {
     id: roomId,
-    players: [playerId],
+    players: [playerId] , 
     cards,
+    maxPlayers,
     flippedCards: [],
     currentPlayer: playerId,
     gameOver: false,
   };
 
+  rooms[roomId].players[0] = playerId;
+
   return roomId;
 };
+
 
 export const joinRoom = (roomId: string, playerId: string): boolean => {
   if (rooms[roomId] && rooms[roomId].players.length < 4) {
@@ -31,6 +36,12 @@ export const joinRoom = (roomId: string, playerId: string): boolean => {
     return true;
   }
   return false;
+};
+
+export const getAvailableRooms = (): Room[] => {
+  return Object.values(rooms).filter(
+    (room) => room.players.length < 4 && !room.gameOver
+  );
 };
 
 export const getRoom = (roomId: string): Room | undefined => {

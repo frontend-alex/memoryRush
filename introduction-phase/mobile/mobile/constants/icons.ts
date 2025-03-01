@@ -25,6 +25,7 @@ import githubBlack from '@/assets/icons/github-mark.png'
 import swrod from '@/assets/icons/swords.png';
 import book from '@/assets/icons/book.png';
 import retry from '@/assets/icons/rotate-ccw.png';
+import plus from '@/assets/icons/plus.png';
 
 export default {
   googleIcon, 
@@ -53,5 +54,6 @@ export default {
   githubBlack,
   book,
   swrod,
-  retry
+  retry,
+  plus
 }

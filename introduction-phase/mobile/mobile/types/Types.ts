@@ -11,37 +11,48 @@ export type Difficulty = "easy" | "medium" | "hard";
 
 interface GameSettingsProps {
   id: string;
-  difficulty: Difficulty; 
+  difficulty: Difficulty;
   name: string;
   numOfCards: number;
-  description: string; 
-  bestPlayerId: string | null; 
-};
-
-
+  description: string;
+  bestPlayerId: string | null;
+}
 
 interface CardProps {
   id: number;
   name: string;
   flipped: boolean;
   matched: boolean;
-};
+}
 
 interface FlippedCardProps {
   name: string;
   index: number;
-};
+}
+interface Card {
+  id: number;
+  name: string;
+  flipped: boolean;
+  matched: boolean;
+}
 
-interface RootStackParamList  {
-  Home: undefined;  // Home doesn't take any parameters
-  Level: { numOfCards: number };  // Level screen expects a numOfCards parameter
-};
+interface Player {}
 
+interface Room {
+  id: string;
+  players: string[];
+  cards: Card[];
+  maxPlayers: number;
+  flippedCards: Card[];
+  currentPlayer: string | null;
+  gameOver: boolean;
+}
 
 export {
-    LoginInputsProps,
-    GameSettingsProps,
-    CardProps,
-    FlippedCardProps,
-    RootStackParamList
-}
+  LoginInputsProps,
+  GameSettingsProps,
+  CardProps,
+  FlippedCardProps,
+  Room,
+  Card,
+};

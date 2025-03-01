@@ -5,13 +5,13 @@ import { saveGameResult } from '../services/databaseService';
 
 export const createGameRoom = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { playerId } = req.body;
-    if (!playerId) {
-      res.status(400).json({ message: 'Player ID is required' });
+    const { playerId, userChoice, maxPlayers } = req.body;
+    if (!playerId || !userChoice || !maxPlayers) {
+      res.status(400).json({ message: 'Player ID, Card or Maximum players is missing' });
       return;
     }
 
-    const roomId = createRoom(playerId);
+    const roomId = createRoom(playerId, userChoice, maxPlayers);
     res.status(201).json({ roomId });
   } catch (error) {
     console.error('Error creating game room:', error);

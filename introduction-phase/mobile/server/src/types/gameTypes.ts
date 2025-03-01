@@ -9,6 +9,7 @@ export interface Room {
   id: string;
   players: string[];
   cards: Card[];
+  maxPlayers: number,
   flippedCards: Card[];
   currentPlayer: string | null;
   gameOver: boolean;
