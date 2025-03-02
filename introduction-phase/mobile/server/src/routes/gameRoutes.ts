@@ -1,12 +1,15 @@
 import express from 'express';
 import {
-  createGameRoom,
+  saveGame,
+  getAllRooms,
   joinGameRoom,
   getGameResult,
-  saveGame,
+  createGameRoom,
 } from '../controllers/gameController';
 
 const router = express.Router();
+
+router.get("/rooms", (req, res) => getAllRooms(req, res) )
 
 router.post('/rooms', (req, res) => createGameRoom(req, res));
 

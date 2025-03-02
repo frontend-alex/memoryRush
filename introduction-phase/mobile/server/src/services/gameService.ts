@@ -1,8 +1,15 @@
+import { Server } from "socket.io";
 import { Room, Card, GameResult } from "../types/gameTypes";
 import { generateCards, shuffle } from "../utils/utils";
 import { saveGameResult } from "./databaseService";
 
 const rooms: { [key: string]: Room } = {};
+
+let io: Server; 
+
+export const setSocketServer = (socketIo: Server) => {
+  io = socketIo;
+};
 
 export const createRoom = (playerId: string, userChoice: number, maxPlayers: number): string => {
   const roomId = `room_${Math.random().toString(36).substr(2, 9)}`;
@@ -21,12 +28,15 @@ export const createRoom = (playerId: string, userChoice: number, maxPlayers: num
     flippedCards: [],
     currentPlayer: playerId,
     gameOver: false,
-    ownerId: playerId, 
+    ownerId: playerId,
   };
+
+  if (io) {
+    io.emit("roomCreated", rooms[roomId]);
+  }
 
   return roomId;
 };
-
 export const joinRoom = (roomId: string, playerId: string): boolean => {
   const room = getRoom(roomId);
   if (room && !room.players.includes(playerId) && room.players.length < room.maxPlayers) {

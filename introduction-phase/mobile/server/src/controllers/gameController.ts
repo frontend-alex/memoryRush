@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getRoom, createRoom, joinRoom } from '../services/gameService';
+import { getRoom, createRoom, joinRoom, getAvailableRooms } from '../services/gameService';
 import { GameResult } from '../types/gameTypes';
 import { saveGameResult } from '../services/databaseService';
 
@@ -13,9 +13,20 @@ export const createGameRoom = async (req: Request, res: Response): Promise<void>
 
     const roomId = createRoom(playerId, userChoice, maxPlayers);
     res.status(201).json({ roomId });
+    
   } catch (error) {
     console.error('Error creating game room:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const getAllRooms = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const rooms = getAvailableRooms();
+    res.status(200).json(rooms);
+  } catch (error) {
+    console.error("Error fetching rooms:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

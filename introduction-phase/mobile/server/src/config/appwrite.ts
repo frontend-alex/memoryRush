@@ -7,7 +7,9 @@ export const config = {
   projectId: '67b44bde0005b2cd0533',
   databaseId: '67bbbbd5001484c9736d',
   mutiplayerGameCollectionid:'67c1b4030028f86cc797',
-  mutiplayerRoomCollectionId: '67c24ca9000f91e66856'
+  mutiplayerRoomCollectionId: '67c24ca9000f91e66856',
+  roomCollectionId: '67c24ca9000f91e66856',
+  cardsCollectionId: '67c46f770007e1647484',
 };
 
 const client = new Client()

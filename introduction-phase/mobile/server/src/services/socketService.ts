@@ -6,9 +6,12 @@ import {
   flipCard,
   endGame,
   deleteRoom,
+  setSocketServer,
 } from "./gameService";
 
 export const socketService = (io: Server) => {
+  setSocketServer(io)
+
   io.on("connection", (socket: Socket) => {
     console.log("a user connected");
 
@@ -26,7 +29,7 @@ export const socketService = (io: Server) => {
           io.to(roomId).emit("playerJoined", room.players);
     
           socket.emit("roomInfo", { ownerId: room.ownerId, players: room.players });
-        }
+        } 
       } else {
         socket.emit("roomNotFound", { roomId });
       }
@@ -95,6 +98,19 @@ export const socketService = (io: Server) => {
     socket.on("gameOver", (roomId: string, elapsedTime: number) => {
       endGame(roomId, elapsedTime);
       io.to(roomId).emit("gameSaved");
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("❌ Disconnected:", socket.id, "Reason:", reason);
+    });
+
+
+    socket.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+    });
+
+    socket.on("error", (err) => {
+      console.error("⚠️ Socket error:", err);
     });
   });
 };

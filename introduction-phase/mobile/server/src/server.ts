@@ -3,9 +3,9 @@ import express from 'express';
 import gameRoutes from './routes/gameRoutes';
 
 import { createServer } from 'http';
+import { config } from './config/appwrite';
 import { Server } from 'socket.io';
 import { socketService } from './services/socketService';
-import { config } from './config/appwrite';
 
 dotenv.config();
 

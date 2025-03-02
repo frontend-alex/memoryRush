@@ -1,37 +1,35 @@
-import useApi from "./useFetch";
-
 import { Room } from "@/types/Types";
-import { URL } from "@/constants/data";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
 import { useGlobalContext } from "@/libs/global-provider";
 import { useIsFocused } from "@react-navigation/native";
+import useApi from "./useFetch";
+import { URL } from "@/constants/data";
 
 const useMultiplayerSocket = () => {
   const router = useRouter();
-  const isFocused = useIsFocused();
-  const [socket, setSocket] = useState<Socket | null>(null);
+
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [hasCreatedRoom, setHasCreatedRoom] = useState(false);
-  const { user } = useGlobalContext();
-  const { isLoading, post } = useApi(URL);
+
+  const { isLoading, post, get } = useApi(URL);
+  const { user, socket } = useGlobalContext();
 
   useEffect(() => {
-    if (!isFocused) return;
+    if (!socket) return;
 
-    const newSocket = io(URL);
-    setSocket(newSocket);
-
-    newSocket.on("connect", () => {
-      newSocket.emit("getAvailableRooms");
-    });
-
-    newSocket.on("availableRooms", (rooms: Room[]) => {
+    socket.on("availableRooms", (rooms: Room[]) => {
       setAvailableRooms(rooms);
     });
 
-    newSocket.on("roomCreated", (newRoom: Room) => {
+    const fetchRoom = async () => {
+      const response = await get('/api/rooms');
+      setAvailableRooms(response)
+    }
+
+    fetchRoom();
+
+    socket.on("roomCreated", (newRoom: Room) => {
       setAvailableRooms((prev) => {
         const updatedRooms = [newRoom, ...prev];
         console.log("Updated rooms after creation:", updatedRooms);
@@ -39,15 +37,11 @@ const useMultiplayerSocket = () => {
       });
     });
 
-    newSocket.on("connect_error", (error) => {
-      console.error("Connection error:", error);
-    });
-
     return () => {
-      newSocket.disconnect();
-      setSocket(null);
+      socket.off("availableRooms");
+      socket.off("roomCreated");
     };
-  }, [isFocused]);
+  }, [socket]);
 
   const createGame = async (userChoice: number, maxPlayers: number) => {
     if (hasCreatedRoom) {
@@ -62,9 +56,9 @@ const useMultiplayerSocket = () => {
           userChoice,
           maxPlayers,
         });
-        console.log(response);
 
         setHasCreatedRoom(true);
+        
         socket.emit("roomCreated");
 
         router.push({
@@ -79,9 +73,9 @@ const useMultiplayerSocket = () => {
     }
   };
 
-  const joinRoom = (roomId: string, playerId: string | undefined) => {
+  const joinRoom = (roomId: string) => {
     if (socket) {
-      socket.emit("joinRoom", roomId, playerId);
+      socket.emit("joinRoom", roomId, user?.$id);
       router.push({
         pathname: "/(root)/multiplayer/lobby",
         params: { roomId },

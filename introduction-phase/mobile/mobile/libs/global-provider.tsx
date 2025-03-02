@@ -1,6 +1,8 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useEffect, useState } from "react";
 import { getCurrentUser } from "./appwrite";
 import { useAppwrite } from "@/hooks/useAppwrite";
+import { io, Socket } from "socket.io-client";
+import { URL } from "@/constants/data";
 
 interface User {
   $id: string;
@@ -13,7 +15,8 @@ interface GlobalContextType {
   isLogged: boolean;
   user: User | null;
   loading: boolean;
-  refetch: () => Promise<void>; 
+  refetch: () => Promise<void>;
+  socket: Socket | null; 
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -28,18 +31,43 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     loading,
     refetch,
   } = useAppwrite({
-    fn: getCurrentUser
+    fn: getCurrentUser,
   });
+
+  const [socket, setSocket] = useState<Socket | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      const newSocket = io(URL);
+      setSocket(newSocket);
+
+      newSocket.on("connect", () => {
+        console.log("Connected to server");
+      });
+
+      newSocket.on("connect_error", (error) => {
+        console.error("Connection error:", error);
+      });
+
+      return () => {
+        newSocket.disconnect();
+      };
+    } else {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+    }
+  }, [user]);
 
   const isLogged = !!user;
 
   return (
-    <GlobalContext.Provider value={{ isLogged, user, loading, refetch }}>
+    <GlobalContext.Provider value={{ isLogged, user, loading, refetch, socket }}>
       {children}
     </GlobalContext.Provider>
   );
 };
-
 
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);

@@ -84,7 +84,7 @@ const Multiplayer = () => {
               Players: {item.players.length}/{item.maxPlayers}
             </Text>
             <TouchableOpacity
-              onPress={() => joinRoom(item.id, user?.$id)}
+              onPress={() => joinRoom(item.id)}
               className="bg-rose-500 py-2 px-4 rounded-lg mt-2"
             >
               <Text className="text-white text-center">Join Room</Text>
