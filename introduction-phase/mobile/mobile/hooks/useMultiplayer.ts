@@ -12,7 +12,7 @@ const useMultiplayerSocket = () => {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [hasCreatedRoom, setHasCreatedRoom] = useState(false);
 
-  const { isLoading, post, get } = useApi(URL);
+  const { post, get } = useApi(URL);
   const { user, socket } = useGlobalContext();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const useMultiplayerSocket = () => {
         });
 
         setHasCreatedRoom(true);
-        
+
         socket.emit("roomCreated");
 
         router.push({

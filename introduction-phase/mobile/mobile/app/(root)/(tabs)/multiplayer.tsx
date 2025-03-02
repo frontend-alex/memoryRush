@@ -13,6 +13,7 @@ import {
   ThemedIcon,
   ThemedInput,
   ThemedText,
+  ThemedView,
 } from "@/components/ui/themed-components";
 import {
   View,
@@ -78,7 +79,7 @@ const Multiplayer = () => {
         data={availableRooms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View className="border p-3 my-2 rounded-md">
+          <ThemedView className="border p-3 my-2 rounded-md">
             <Text className="text-lg font-bold">Room ID: {item.id}</Text>
             <Text className="text-gray-500">
               Players: {item.players.length}/{item.maxPlayers}
@@ -89,7 +90,7 @@ const Multiplayer = () => {
             >
               <Text className="text-white text-center">Join Room</Text>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         )}
       />
     </FullSafeAreaScreen>
