@@ -4,14 +4,14 @@ import { URL } from '@/constants/data';
 
 export const createGameRoom = async (playerId: string | undefined, userChoice: number, maxPlayers: number) => {
   try {
-
+    console.log(userChoice)
+    console.log(maxPlayers)
+    
     const response = await axios.post(`${URL}/api/rooms`, {
       playerId,
       userChoice : 25,
       maxPlayers : 3
     });
-
-    console.log(response)
 
     return response.data.roomId;
 

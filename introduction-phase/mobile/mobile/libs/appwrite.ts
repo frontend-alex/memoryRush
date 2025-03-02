@@ -12,7 +12,7 @@ import {
 } from "react-native-appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
-import { useGlobalContext } from "./global-provider";
+import * as WebBrowser from 'expo-web-browser';
 
 export const config = {
   platform: "com.memoryRush.restate",
@@ -39,18 +39,27 @@ export async function loginWithProvider(provider: OAuthProvider) {
   try {
     const redirectUri = Linking.createURL("/");
 
-    const response = await account.createOAuth2Token(provider, redirectUri);
+    const response = await account.createOAuth2Token(provider, 'redirectUri');
+    console.log("OAuth2 Token Response:", response);
     if (!response) throw new Error("Create OAuth2 token failed");
 
-    const browserResult = await openAuthSessionAsync(
+    const browserResult = await WebBrowser.openAuthSessionAsync(
       response.toString(),
       redirectUri
     );
-    if (browserResult.type !== "success") throw new Error("OAuth login failed");
+    console.log("Browser Result:", browserResult);
+
+    if (browserResult.type !== "success") {
+      console.error("OAuth login failed. Browser result:", browserResult);
+      throw new Error("OAuth login failed");
+    }
 
     const url = new URL(browserResult.url);
     const secret = url.searchParams.get("secret")?.toString();
     const userId = url.searchParams.get("userId")?.toString();
+    console.log("Secret:", secret);
+    console.log("User ID:", userId);
+
     if (!secret || !userId) throw new Error("OAuth login failed");
 
     const session = await account.createSession(userId, secret);
@@ -106,6 +115,7 @@ export async function loginWithProvider(provider: OAuthProvider) {
     return false;
   }
 }
+
 
 export async function logout() {
   try {

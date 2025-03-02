@@ -1,12 +1,11 @@
-import { Room, Card, GameResult } from '../types/gameTypes';
-import { generateCards, shuffle } from '../utils/utils';
-import { saveGameResult } from './databaseService';
+import { Room, Card, GameResult } from "../types/gameTypes";
+import { generateCards, shuffle } from "../utils/utils";
+import { saveGameResult } from "./databaseService";
 
 const rooms: { [key: string]: Room } = {};
 
 export const createRoom = (playerId: string, userChoice: number, maxPlayers: number): string => {
   const roomId = `room_${Math.random().toString(36).substr(2, 9)}`;
-  
   const cards = shuffle(generateCards(userChoice)).map((name, index) => ({
     id: index,
     name,
@@ -16,36 +15,49 @@ export const createRoom = (playerId: string, userChoice: number, maxPlayers: num
 
   rooms[roomId] = {
     id: roomId,
-    players: [playerId] , 
+    players: [playerId],
     cards,
     maxPlayers,
     flippedCards: [],
     currentPlayer: playerId,
     gameOver: false,
+    ownerId: playerId, 
   };
-
-  rooms[roomId].players[0] = playerId;
 
   return roomId;
 };
 
-
 export const joinRoom = (roomId: string, playerId: string): boolean => {
-  if (rooms[roomId] && rooms[roomId].players.length < 4) {
-    rooms[roomId].players.push(playerId);
+  const room = getRoom(roomId);
+  if (room && !room.players.includes(playerId) && room.players.length < room.maxPlayers) {
+    room.players.push(playerId);
     return true;
   }
   return false;
 };
 
 export const getAvailableRooms = (): Room[] => {
-  return Object.values(rooms).filter(
-    (room) => room.players.length < 4 && !room.gameOver
-  );
+  return Object.values(rooms).filter((room) => room.players.length < room.maxPlayers && !room.gameOver);
 };
 
 export const getRoom = (roomId: string): Room | undefined => {
   return rooms[roomId];
+};
+
+export const deleteRoom = (roomId: string): void => {
+  if (rooms[roomId]) {
+    delete rooms[roomId];
+    console.log(`Room ${roomId} deleted successfully.`);
+  } else {
+    console.log(`Room ${roomId} not found.`);
+  }
+};
+
+export const kickPlayer = (roomId: string, playerId: string): void => {
+  const room = rooms[roomId];
+  if (room) {
+    room.players = room.players.filter((id) => id !== playerId);
+  }
 };
 
 export const flipCard = (roomId: string, card: Card, playerId: string): Room | null => {
@@ -75,20 +87,19 @@ export const endGame = async (roomId: string, elapsedTime: number): Promise<void
   if (!room) return;
 
   const scores: { [playerId: string]: number } = {};
-  let winner = '';
+  let winner = "";
   let maxScore = 0;
-
 
   room.players.forEach((playerId) => {
     const matchedCards = room.cards.filter((card) => card.matched).length;
-    scores[playerId] = matchedCards * 10; 
+    scores[playerId] = matchedCards * 10;
     if (scores[playerId] > maxScore) {
       maxScore = scores[playerId];
       winner = playerId;
     }
   });
 
-  const bonus = winner ? 50 : 0; 
+  const bonus = winner ? 50 : 0;
 
   const gameResult: GameResult = {
     roomId,
@@ -101,11 +112,10 @@ export const endGame = async (roomId: string, elapsedTime: number): Promise<void
 
   try {
     await saveGameResult(gameResult);
-    console.log('Game result saved successfully:', gameResult);
+    console.log("Game result saved successfully:", gameResult);
   } catch (error) {
-    console.error('Failed to save game result:', error);
+    console.error("Failed to save game result:", error);
   }
 
-  // Clean up the room
   delete rooms[roomId];
 };

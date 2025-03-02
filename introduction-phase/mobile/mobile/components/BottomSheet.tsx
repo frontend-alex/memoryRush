@@ -1,6 +1,5 @@
-import { Dimensions, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, { useCallback, useImperativeHandle } from 'react';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import React, { useCallback, useImperativeHandle, useRef } from 'react';
+import { Dimensions, StyleSheet, View, TouchableOpacity } from 'react-native';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -9,11 +8,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// Set MAX_TRANSLATE_Y to 40% of the screen height
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.9;
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type BottomSheetProps = {
   children?: React.ReactNode;
@@ -35,7 +32,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       active.value = destination !== 0;
 
       translateY.value = withSpring(destination, { damping: 50 });
-      overlayOpacity.value = withTiming(destination !== 0 ? 0.5 : 0); 
+      overlayOpacity.value = withTiming(destination !== 0 ? 0.5 : 0);
     }, []);
 
     const isActive = useCallback(() => {
@@ -54,20 +51,20 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
       })
       .onUpdate((event) => {
         translateY.value = event.translationY + context.value.y;
-        translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y); // Limit to MAX_TRANSLATE_Y
+        translateY.value = Math.max(translateY.value, -SCREEN_HEIGHT * 0.9); // Limit to 90% of screen height
       })
       .onEnd(() => {
         if (translateY.value > -SCREEN_HEIGHT / 3) {
           scrollTo(0); // Snap to bottom
         } else if (translateY.value < -SCREEN_HEIGHT / 1.5) {
-          scrollTo(MAX_TRANSLATE_Y); // Snap to 40% height
+          scrollTo(-SCREEN_HEIGHT * 0.9); // Snap to 90% height
         }
       });
 
     const rBottomSheetStyle = useAnimatedStyle(() => {
       const borderRadius = interpolate(
         translateY.value,
-        [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
+        [-SCREEN_HEIGHT * 0.9 + 50, -SCREEN_HEIGHT * 0.9],
         [25, 5],
         Extrapolate.CLAMP
       );
@@ -90,7 +87,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
           <TouchableOpacity
             style={styles.overlayTouchable}
             activeOpacity={1}
-            onPress={() => scrollTo(0)} 
+            onPress={() => scrollTo(0)} // Close the bottom sheet when overlay is pressed
           />
         </Animated.View>
 
@@ -106,23 +103,24 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
 );
 
 const styles = StyleSheet.create({
+  bottomSheetContainer: {
+    height: SCREEN_HEIGHT,
+    width: SCREEN_WIDTH,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: SCREEN_HEIGHT, // Start off-screen
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    zIndex: 1000, // Higher than tabs
+    elevation: 1000, // For Android
+  },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject, // Cover the entire screen
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
-    zIndex: 998, // Below the bottom sheet
+    zIndex: 999, // Below the bottom sheet
   },
   overlayTouchable: {
     flex: 1,
-  },
-  bottomSheetContainer: {
-    height: SCREEN_HEIGHT,
-    width: '100%',
-    backgroundColor: 'white',
-    position: 'absolute',
-    top: SCREEN_HEIGHT,
-    borderRadius: 25,
-    zIndex: 999, // Above the overlay
-    elevation: 999, // For Android
   },
   line: {
     width: 75,

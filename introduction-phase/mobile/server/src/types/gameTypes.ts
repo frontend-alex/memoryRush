@@ -13,6 +13,7 @@ export interface Room {
   flippedCards: Card[];
   currentPlayer: string | null;
   gameOver: boolean;
+  ownerId: string;
 }
 
 export interface GameResult {

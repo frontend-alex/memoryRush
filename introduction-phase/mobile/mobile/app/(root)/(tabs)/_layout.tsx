@@ -64,7 +64,8 @@ const LoggedLayout = () => {
           shadowOffset: { width: 0, height: 10 },
           shadowOpacity: 0.15,
           shadowRadius: 10,
-          elevation: 10,
+          elevation: 1,
+          zIndex: 1,
         },
       }}
     >

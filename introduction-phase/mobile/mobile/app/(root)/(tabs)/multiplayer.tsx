@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import icons from "@/constants/icons";
 import BackButton from "@/components/ui/goBackButton";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
+import useMultiplayerSocket from "@/hooks/useMultiplayer";
 
+
+import { useNavigation } from "expo-router";
+import { useGlobalContext } from "@/libs/global-provider";
+import { createGameButtons, createGameCardsButtons } from "@/constants/data";
+import BottomSheet, { BottomSheetRefProps } from "@/components/BottomSheet";
 import {
   ThemedIcon,
   ThemedInput,
   ThemedText,
-  ThemedTochableOpacity,
 } from "@/components/ui/themed-components";
 import {
   View,
@@ -17,36 +22,28 @@ import {
   Pressable,
   Text,
   FlatList,
+  TouchableOpacity,
+  Dimensions,
 } from "react-native";
-import useMultiplayerSocket from "@/hooks/useMultiplayer";
-
-import { useGlobalContext } from "@/libs/global-provider";
-import { useBottomSheet } from "@/contexts/BottomSheetContext";
-import { createGameButtons, createGameCardsButtons } from "@/constants/data";
 
 const Multiplayer = () => {
   const { user } = useGlobalContext();
-  const { openBottomSheet } = useBottomSheet();
+  const { availableRooms, joinRoom } = useMultiplayerSocket();
 
-  const [userChoice, setUserChoice] = useState<number>(0);
-  const [maxPlayers, setMaxPlayers] = useState<number>(0);
+  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-  const { availableRooms, createGame } = useMultiplayerSocket();
+  const bottomSheetRef = useRef<BottomSheetRefProps | null>(null);
 
-  const handleOpenSheet = () => {
-    openBottomSheet(
-      <BottomSheetContent
-        userChoice={userChoice}
-        setUserChoice={setUserChoice}
-        maxPlayers={maxPlayers}
-        setMaxPlayers={setMaxPlayers}
-        createGame={createGame}
-      />
-    );
+  const openBottomSheet = () => {
+    bottomSheetRef.current?.scrollTo(-SCREEN_HEIGHT * 0.4);
   };
 
   return (
     <FullSafeAreaScreen className="flex-col-5">
+      <BottomSheet ref={bottomSheetRef}>
+        <BottomSheetContent />
+      </BottomSheet>
+
       <View className="flex flex-row items-center justify-between">
         <BackButton path={"/home"} />
         <Image
@@ -54,7 +51,9 @@ const Multiplayer = () => {
           source={{ uri: user?.avatar }}
         />
       </View>
+
       <ThemedText className="font-rubik-bold text-2xl">Multiplayer</ThemedText>
+
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View className="relative">
           <ThemedInput
@@ -67,7 +66,7 @@ const Multiplayer = () => {
             source={icons.search}
           />
           <Pressable
-            onPress={handleOpenSheet}
+            onPress={openBottomSheet}
             className="absolute top-[28%] right-3"
           >
             <ThemedIcon className="size-7" icon={icons.plus} />
@@ -79,11 +78,17 @@ const Multiplayer = () => {
         data={availableRooms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View>
-            <Text>Room ID: {item.id}</Text>
-            <Text>
+          <View className="border p-3 my-2 rounded-md">
+            <Text className="text-lg font-bold">Room ID: {item.id}</Text>
+            <Text className="text-gray-500">
               Players: {item.players.length}/{item.maxPlayers}
             </Text>
+            <TouchableOpacity
+              onPress={() => joinRoom(item.id, user?.$id)}
+              className="bg-rose-500 py-2 px-4 rounded-lg mt-2"
+            >
+              <Text className="text-white text-center">Join Room</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -91,79 +96,78 @@ const Multiplayer = () => {
   );
 };
 
-// BottomSheetContent Component
-const BottomSheetContent = ({
-  userChoice,
-  setUserChoice,
-  maxPlayers,
-  setMaxPlayers,
-  createGame,
-}: {
-  userChoice: number;
-  setUserChoice: (value: number) => void;
-  maxPlayers: number;
-  setMaxPlayers: (value: number) => void;
-  createGame: (userChoice: number, maxPlayers: number) => void;
-}) => {
+const BottomSheetContent = () => {
+  const [userChoice, setUserChoice] = useState<number>(15);
+  const [maxPlayers, setMaxPlayers] = useState<number>(2);
+
+  const { createGame } = useMultiplayerSocket();
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View className="p-5 flex flex-col gap-7">
-        <ThemedText className="text-xl font-rubik-bold">Create a room</ThemedText>
+        <ThemedText className="text-xl font-rubik-bold">
+          Create a Room
+        </ThemedText>
 
         {/* Player Count Input */}
         <View className="flex-col-3">
-          <ThemedText>Player count</ThemedText>
+          <ThemedText>Player Count</ThemedText>
           <View className="flex flex-row gap-3">
-            {createGameButtons.map((button, idx) => {
-              return (
-                <ThemedTochableOpacity
-                  onPress={() => setUserChoice(idx + 2)}
-                  key={idx}
-                  className={`${
-                    idx + 2 == userChoice ? "bg-rose-500 border-rose-500" : ""
-                  } py-2 px-4 rounded-lg border`}
+            {createGameButtons.map((button, idx) => (
+              <TouchableOpacity
+                onPress={() => setMaxPlayers(button.name)}
+                key={idx}
+                className={`py-2 px-4 rounded-lg border ${
+                  idx + 2 === maxPlayers
+                    ? "bg-rose-500 border-rose-500 text-white"
+                    : "border border-neutral-100 bg-neutral-50"
+                }`}
+              >
+                <Text
+                  className={
+                    idx + 2 === maxPlayers ? "text-white" : "text-black"
+                  }
                 >
-                  <ThemedText>{button.name}</ThemedText>
-                </ThemedTochableOpacity>
-              );
-            })}
+                  {button.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
         {/* Cards Count Input */}
         <View className="flex-col-3">
-          <ThemedText>Cards count</ThemedText>
+          <ThemedText>Cards Count</ThemedText>
           <View className="flex flex-row gap-3">
-            {createGameCardsButtons.map((button, idx) => {
-              return (
-                <ThemedTochableOpacity
-                  onPress={() => setMaxPlayers(idx + 2)}
-                  key={idx}
-                  className={`${
-                    idx + 2 == maxPlayers ? "bg-rose-500 border-rose-500 hidden" : ""
-                  } py-2 px-4 rounded-lg border`}
+            {createGameCardsButtons.map((button, idx) => (
+              <TouchableOpacity
+                onPress={() => setUserChoice(button.name)}
+                key={idx}
+                className={`py-2 px-4 rounded-lg border ${
+                  button.name === userChoice
+                    ? "bg-rose-500 border-rose-500 text-white"
+                    : "border border-neutral-100 bg-neutral-50"
+                }`}
+              >
+                <Text
+                  className={
+                    button.name === userChoice ? "text-white" : "text-black"
+                  }
                 >
-                  <ThemedText>{button.name}</ThemedText>
-                </ThemedTochableOpacity>
-              );
-            })}
+                  {button.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
         {/* Create Game Button */}
-        <ThemedTochableOpacity
-          onPress={() => {
-            if (userChoice && maxPlayers) {
-              createGame(userChoice, maxPlayers);
-              console.log('activated')
-            } else {
-              console.log("Please enter valid numbers for both fields.");
-            }
-          }}
-          className="button py-5"
+        <TouchableOpacity
+          onPress={() => createGame(userChoice, maxPlayers)}
+          className="bg-rose-500 py-4 rounded-lg text-center flex-center"
         >
-          <Text className="text-white font-rubik-bold py-1">Create Game</Text>
-        </ThemedTochableOpacity>
+          <Text className="text-white font-rubik-bold">Create Game</Text>
+        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );

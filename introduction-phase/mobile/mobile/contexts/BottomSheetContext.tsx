@@ -13,7 +13,7 @@ export const BottomSheetProvider = ({ children }: { children: React.ReactNode })
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
   const [content, setContent] = useState<React.ReactNode>(null);
-  const bottomSheetRef = useRef<BottomSheetRefProps>(null);
+  const bottomSheetRef = useRef<BottomSheetRefProps | null>(null);
 
   const openBottomSheet = (content: React.ReactNode) => {
     setContent(content);

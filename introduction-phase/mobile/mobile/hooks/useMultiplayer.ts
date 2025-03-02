@@ -1,20 +1,26 @@
+import useApi from "./useFetch";
+
+import { Room } from "@/types/Types";
+import { URL } from "@/constants/data";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { useIsFocused } from "@react-navigation/native";
-import { Room } from "@/types/Types";
 import { useGlobalContext } from "@/libs/global-provider";
-import { createGameRoom } from "./api";
+import { useIsFocused } from "@react-navigation/native";
 
 const useMultiplayerSocket = () => {
+  const router = useRouter();
   const isFocused = useIsFocused();
-  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+  const [hasCreatedRoom, setHasCreatedRoom] = useState(false);
+  const { user } = useGlobalContext();
+  const { isLoading, post } = useApi(URL);
 
   useEffect(() => {
     if (!isFocused) return;
 
-    // Initialize the socket connection
-    const newSocket = io("http://192.168.2.9:3000");
+    const newSocket = io(URL);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -44,20 +50,48 @@ const useMultiplayerSocket = () => {
   }, [isFocused]);
 
   const createGame = async (userChoice: number, maxPlayers: number) => {
+    if (hasCreatedRoom) {
+      console.error("You have already created a room.");
+      return;
+    }
+
     if (socket) {
+      try {
+        const response = await post("/api/rooms", {
+          playerId: user?.$id,
+          userChoice,
+          maxPlayers,
+        });
+        console.log(response);
 
-      const { user } = useGlobalContext();
+        setHasCreatedRoom(true);
+        socket.emit("roomCreated");
 
-      const response = await createGameRoom(user?.$id, userChoice, maxPlayers);
-      console.log(response)
-      socket.emit("roomCreated");
-      
+        router.push({
+          pathname: "/(root)/multiplayer/lobby",
+          params: { roomId: response.roomId },
+        });
+      } catch (err) {
+        console.error("Error in post request:", err);
+      }
     } else {
       console.error("Socket is not connected");
     }
   };
 
-  return { availableRooms, createGame };
+  const joinRoom = (roomId: string, playerId: string | undefined) => {
+    if (socket) {
+      socket.emit("joinRoom", roomId, playerId);
+      router.push({
+        pathname: "/(root)/multiplayer/lobby",
+        params: { roomId },
+      });
+    } else {
+      console.error("Socket is not connected");
+    }
+  };
+
+  return { availableRooms, createGame, hasCreatedRoom, joinRoom };
 };
 
 export default useMultiplayerSocket;
