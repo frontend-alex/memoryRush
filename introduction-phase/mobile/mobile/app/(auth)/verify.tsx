@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { account } from "@/libs/appwrite";
 import { Text, Alert } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { account } from "@/libs/appwrite";
+
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 import useAuth from "@/hooks/useAuth";
 

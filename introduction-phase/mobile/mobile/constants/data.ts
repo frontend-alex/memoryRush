@@ -41,8 +41,8 @@ export const settings = [
   {
     title: "Play on Web",
     icon: icons.globe,
-    showArrow: true,
-    onPress: () => Linking.openURL("https://flip-card-game-sigma.vercel.app/")
+    showLink: true,
+    onPress: () => Linking.openURL("https://memory-rush.vercel.app/")
   },
   {
     title: "Notifications",
@@ -59,6 +59,8 @@ export const settings = [
   {
     title: "Privacy & Policy",
     icon: icons.cookie,
+    showLink: true,
+    onPress: () => Linking.openURL("https://memory-rush.vercel.app/privacy-policy")
   },
   {
     title: "Invite Friends",

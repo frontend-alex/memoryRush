@@ -14,7 +14,7 @@ const PolicyRoute = () => {
           <p className="text-sm">Go back</p>
         </button>
       </div>
-      <h1 className="font-black text-7xl">Privacy Policy for MemoryRush</h1>
+      <h1 className="font-black text-4xl lg:text-7xl">Privacy Policy for MemoryRush</h1>
       <span className="hidden z-[-1] sm:flex absolute bottom-0 top-36 xl:left-1/2 w-[600px] h-[600px] overflow-hidden bg-rose-600/30 dark:bg-rose-600/10 blur-3xl"></span>
 
       <p>

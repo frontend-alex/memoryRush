@@ -24,6 +24,7 @@ interface SettingsItemProps {
   title: string;
   onPress?: () => void;
   textStyle?: string;
+  showLink ?: boolean
   showArrow?: boolean;
   isArray: boolean;
 }
@@ -35,6 +36,7 @@ const SettingsItem = ({
   textStyle,
   showArrow,
   isArray,
+  showLink
 }: SettingsItemProps) => {
   const { isDarkMode } = useTheme();
 
@@ -59,6 +61,13 @@ const SettingsItem = ({
           tintColor={isDarkMode ? "white" : "black"}
           source={icons.chevronLeft}
           className="size-5 rotate-180"
+        />
+      )}
+      {showLink && (
+        <Image
+          tintColor={isDarkMode ? "white" : "black"}
+          source={icons.link}
+          className="size-5"
         />
       )}
     </TouchableOpacity>
@@ -107,11 +116,6 @@ const Profile = () => {
             {user?.name}
           </ThemedText>
         </View>
-
-        {/* <View className="flex flex-col mt-10">
-          <SettingsItem icon={icons.calendar} title="My Bookings" />
-          <SettingsItem icon={icons.wallet} title="Payments" />
-        </View> */}
 
         <ThemedBorder className="w-full" />
 

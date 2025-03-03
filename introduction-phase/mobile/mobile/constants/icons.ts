@@ -26,6 +26,7 @@ import swrod from '@/assets/icons/swords.png';
 import book from '@/assets/icons/book.png';
 import retry from '@/assets/icons/rotate-ccw.png';
 import plus from '@/assets/icons/plus.png';
+import link from '@/assets/icons/link.png';
 
 export default {
   googleIcon, 
@@ -55,5 +56,6 @@ export default {
   book,
   swrod,
   retry,
-  plus
+  plus,
+  link
 }
