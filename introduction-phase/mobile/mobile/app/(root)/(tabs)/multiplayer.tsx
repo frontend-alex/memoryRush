@@ -4,7 +4,6 @@ import BackButton from "@/components/ui/goBackButton";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 import useMultiplayerSocket from "@/hooks/useMultiplayer";
 
-
 import { useGlobalContext } from "@/libs/global-provider";
 import { createGameButtons, createGameCardsButtons } from "@/constants/data";
 import BottomSheet, { BottomSheetRefProps } from "@/components/BottomSheet";
@@ -29,7 +28,7 @@ import RoomCard from "@/components/cards/RoomCard";
 
 const Multiplayer = () => {
   const { user } = useGlobalContext();
-  const { availableRooms, joinRoom } = useMultiplayerSocket();
+  const { availableRooms, isLoading } = useMultiplayerSocket();
 
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -75,13 +74,15 @@ const Multiplayer = () => {
         </View>
       </TouchableWithoutFeedback>
 
-      <FlatList
-        data={availableRooms}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <RoomCard {...item}/>
-        )}
-      />
+      {isLoading ? (
+        <Text className="text-lg font-rubik-bold">Loading...</Text>
+      ) : (
+        <FlatList
+          data={availableRooms}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <RoomCard {...item} />}
+        />
+      )}
     </FullSafeAreaScreen>
   );
 };

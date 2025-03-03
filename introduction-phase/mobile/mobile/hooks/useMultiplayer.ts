@@ -12,7 +12,7 @@ const useMultiplayerSocket = () => {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [hasCreatedRoom, setHasCreatedRoom] = useState(false);
 
-  const { post, get } = useApi(URL);
+  const { post, get, isLoading } = useApi(URL);
   const { user, socket } = useGlobalContext();
 
   useEffect(() => {
@@ -44,11 +44,6 @@ const useMultiplayerSocket = () => {
   }, [socket]);
 
   const createGame = async (userChoice: number, maxPlayers: number) => {
-    if (hasCreatedRoom) {
-      console.error("You have already created a room.");
-      return;
-    }
-
     if (socket) {
       try {
         const response = await post("/api/rooms", {
@@ -89,7 +84,7 @@ const useMultiplayerSocket = () => {
     }
   };
 
-  return { availableRooms, createGame, hasCreatedRoom, joinRoom };
+  return { availableRooms, createGame, hasCreatedRoom, joinRoom, isLoading };
 };
 
 export default useMultiplayerSocket;

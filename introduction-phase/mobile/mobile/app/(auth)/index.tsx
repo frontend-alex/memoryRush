@@ -4,6 +4,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -19,7 +20,6 @@ const InitialPage = () => {
     <FullSafeAreaScreen className="flex justify-between pb-10">
       <View
         className="bg-rose-500 absolute top-0 h-[170px]  w-full rounded-b-full"
-        style={{ elevation: 1 }} 
       />
 
       <View className="flex flex-col items-center">
@@ -39,12 +39,12 @@ const InitialPage = () => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity
+      <Pressable
         className="button"
-        onPress={() => router.push("/sign-in")}
+        onPress={() => console.log('cicki')}
       >
         <Text className="text-lg text-white font-rubik-semibold">Continue</Text>
-      </TouchableOpacity>
+      </Pressable>
     </FullSafeAreaScreen>
   );
 };

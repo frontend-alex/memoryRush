@@ -13,6 +13,7 @@ const FullSafeAreaScreen = ({
   className,
   ...props
 }: FullSafeAreaScreenProps) => {
+  
   const { height } = useWindowDimensions();
   const { isDarkMode } = useTheme();
 

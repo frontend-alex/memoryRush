@@ -7,7 +7,9 @@ import { useGlobalContext } from "@/libs/global-provider";
 const AuthLayout = () => {
   const router = useRouter();
   const pathname = usePathname();
+  
   const { isLogged, loading, user } = useGlobalContext();
+
   const [redirected, setRedirected] = useState(false); 
 
   useEffect(() => {

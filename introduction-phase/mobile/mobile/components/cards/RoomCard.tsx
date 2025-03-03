@@ -19,7 +19,7 @@ const RoomCard = ({
 
   const { joinRoom } = useMultiplayerSocket();
 
-  const { data } = useAppwrite({
+  const { data, loading } = useAppwrite({
     fn: getUserById,
     params: {
       id: ownerId,
