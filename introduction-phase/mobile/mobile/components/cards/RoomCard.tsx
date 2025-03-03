@@ -1,22 +1,20 @@
 import React from "react";
-import { ThemedIcon, ThemedText, ThemedView } from "../ui/themed-components";
+import icons from "@/constants/icons";
+import useMultiplayerSocket from "@/hooks/useMultiplayer";
+
 import { Room } from "@/types/Types";
 import { getUserById } from "@/libs/appwrite";
 import { useAppwrite } from "@/hooks/useAppwrite";
-import { useGlobalContext, User } from "@/libs/global-provider";
-import { Alert, Image, Pressable, Text, View } from "react-native";
-import icons from "@/constants/icons";
 import { getDifficulty, getDifficultyColor } from "@/libs/utils";
-import { router } from "expo-router";
-import useMultiplayerSocket from "@/hooks/useMultiplayer";
+import { Alert, Image, Pressable, Text, View } from "react-native";
+import { ThemedIcon, ThemedText, ThemedView } from "../ui/themed-components";
 
 const RoomCard = ({
-  cards,
-  currentPlayer,
   id,
-  maxPlayers,
+  cards,
   players,
   ownerId,
+  maxPlayers,
 }: Room) => {
 
   const { joinRoom } = useMultiplayerSocket();
@@ -50,20 +48,20 @@ const RoomCard = ({
           {data?.name}'s room
         </ThemedText>
         <ThemedText className="uppercase text-xl font-rubik-bold text-stone-400">
-          #{id?.split("_")[1]}
+          #{id.split("_")[1]}
         </ThemedText>
         <View className="flex flex-row gap-1">
           <ThemedIcon
-            className={players?.length === maxPlayers ? "opacity-35" : ""}
-            tintColor={players?.length === maxPlayers ? "#a8a29e" : ""}
+            className={players.length === maxPlayers ? "opacity-35" : ""}
+            tintColor={players.length === maxPlayers ? "#a8a29e" : ""}
             icon={icons.user}
           />
           <ThemedText
             className={`${
-              players?.length === maxPlayers ? "text-stone-400 opacity-35" : ""
+              players.length === maxPlayers ? "text-stone-400 opacity-35" : ""
             } font-rubik-semibold`}
           >
-            {players?.length} / {maxPlayers}
+            {players.length} / {maxPlayers}
           </ThemedText>
           {players?.length === maxPlayers && (
             <Text className="text-stone-400 text-sm font-rubik-semibold opacity-35">
@@ -76,11 +74,11 @@ const RoomCard = ({
           <View
             className="w-5 h-5 rounded-full"
             style={{
-              backgroundColor: getDifficultyColor(getDifficulty(cards?.length)),
+              backgroundColor: getDifficultyColor(getDifficulty(cards.length)),
             }}
           />
           <ThemedText className="capitalize w-full font-rubik-semibold">
-            {getDifficulty(cards?.length)} ({cards?.length})
+            {getDifficulty(cards.length)} ({cards.length})
           </ThemedText>
         </View>
         <Image
