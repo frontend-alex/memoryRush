@@ -7,7 +7,7 @@ interface LoginInputsProps {
   icon: ImageSourcePropType;
 }
 
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = "easy" | "medium" | "hard" | undefined;
 
 interface GameSettingsProps {
   id: string;
@@ -45,6 +45,7 @@ interface Room {
   maxPlayers: number;
   flippedCards: Card[];
   currentPlayer: string | null;
+  ownerId: string,
   gameOver: boolean;
 }
 

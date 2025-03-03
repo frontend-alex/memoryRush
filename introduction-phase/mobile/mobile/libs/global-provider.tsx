@@ -4,7 +4,7 @@ import { useAppwrite } from "@/hooks/useAppwrite";
 import { io, Socket } from "socket.io-client";
 import { URL } from "@/constants/data";
 
-interface User {
+export interface User {
   $id: string;
   name: string;
   email: string;

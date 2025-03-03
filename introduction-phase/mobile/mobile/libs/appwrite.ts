@@ -13,6 +13,7 @@ import {
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import * as WebBrowser from 'expo-web-browser';
+import { Alert } from "react-native";
 
 export const config = {
   platform: "com.memoryRush.restate",
@@ -39,7 +40,7 @@ export async function loginWithProvider(provider: OAuthProvider) {
   try {
     const redirectUri = Linking.createURL("/");
 
-    const response = await account.createOAuth2Token(provider, 'redirectUri');
+    const response = await account.createOAuth2Token(provider, redirectUri);
     console.log("OAuth2 Token Response:", response);
     if (!response) throw new Error("Create OAuth2 token failed");
 
@@ -116,6 +117,74 @@ export async function loginWithProvider(provider: OAuthProvider) {
   }
 }
 
+export async function registerUser(email: string, name: string, password: string) {
+  try {
+    const existingUser = await databases.listDocuments(
+      config.databaseId!,
+      config.userCollectionId!,
+      [Query.equal("email", email)]
+    );
+
+    if (existingUser.documents.length > 0) {
+      throw new Error("A user with this email already exists.");
+    }
+
+    const user = await account.create(ID.unique(), email, password, name);
+
+    await databases.createDocument(
+      config.databaseId!,
+      config.userCollectionId!,
+      ID.unique(),
+      {
+        userId: user.$id,
+        name: name,
+        email: email,
+        avatar: name ? avatar.getInitials(name) : "",
+        provider: "email",
+      },
+      [
+        Permission.read(Role.user(user.$id)),
+        Permission.update(Role.user(user.$id)),
+        Permission.delete(Role.user(user.$id)),
+      ]
+    );
+
+
+    const session = await account.createEmailPasswordSession(email, password);
+    if (!session) throw new Error("Failed to create session");
+
+    return true;
+  } catch (error) {
+    console.error("Registration error:", error);
+    throw error; 
+  }
+}
+
+export async function loginUser(email: string, password: string) {
+  try {
+    const session = await account.createEmailPasswordSession(email, password);
+    if (!session) throw new Error("Failed to create session");
+
+    const user = await account.get();
+    if (!user) throw new Error("User not found");
+
+    // Check if user exists in the database
+    const existingUser = await databases.listDocuments(
+      config.databaseId!,
+      config.userCollectionId!,
+      [Query.equal("userId", user.$id)]
+    );
+
+    if (existingUser.documents.length === 0) {
+      throw new Error("User not found in database");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error; // Propagate the error to the caller
+  }
+}
 
 export async function logout() {
   try {
@@ -130,18 +199,26 @@ export async function logout() {
 export async function getCurrentUser() {
   try {
     const result = await account.get();
-    if (result.$id) {
-      const userAvatar = avatar.getInitials(result.name);
+    if (!result.$id) return null;
 
-      return {
-        ...result,
-        avatar: userAvatar.toString(),
-      };
+    const userInDatabase = await databases.listDocuments(
+      config.databaseId!, 
+      config.userCollectionId!, 
+      [Query.equal("userId", result.$id)]
+    );
+
+    if (userInDatabase.documents.length === 0) {
+      return null;
     }
 
-    return null;
+    const userAvatar = avatar.getInitials(result.name);
+
+    return {
+      ...result,
+      avatar: userAvatar.toString(),
+    };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching current user:", error);
     return null;
   }
 }
@@ -180,8 +257,6 @@ export async function getLevelById(params: { id: string }) {
   try {
     const { id } = params;
 
-    console.log(params);
-
     const response = await databases.getDocument(
       config.databaseId!,
       config.levelCollectionId!,
@@ -193,6 +268,23 @@ export async function getLevelById(params: { id: string }) {
     console.log(err);
   }
 }
+
+export async function getUserById(params: { id: string }) {
+  try {
+    const { id } = params;
+
+    const response = await databases.getDocument(
+      config.databaseId!,
+      config.userCollectionId!,
+      id
+    );
+
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
 export const saveGameData = async (
   levelId: string | string [], 

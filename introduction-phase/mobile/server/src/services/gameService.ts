@@ -32,7 +32,15 @@ export const createRoom = (playerId: string, userChoice: number, maxPlayers: num
   };
 
   if (io) {
-    io.emit("roomCreated", rooms[roomId]);
+    const creatorSocket = io.sockets.sockets.get(playerId);
+    if (creatorSocket) {
+      creatorSocket.join(roomId); 
+      creatorSocket.emit("roomInfo", { 
+        ownerId: rooms.ownerId, 
+        players: rooms.players 
+      });
+    }
+    io.emit("roomCreated", rooms); 
   }
 
   return roomId;

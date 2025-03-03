@@ -5,7 +5,6 @@ import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 import useMultiplayerSocket from "@/hooks/useMultiplayer";
 
 
-import { useNavigation } from "expo-router";
 import { useGlobalContext } from "@/libs/global-provider";
 import { createGameButtons, createGameCardsButtons } from "@/constants/data";
 import BottomSheet, { BottomSheetRefProps } from "@/components/BottomSheet";
@@ -26,6 +25,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import RoomCard from "@/components/cards/RoomCard";
 
 const Multiplayer = () => {
   const { user } = useGlobalContext();
@@ -79,18 +79,7 @@ const Multiplayer = () => {
         data={availableRooms}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ThemedView className="border p-3 my-2 rounded-md">
-            <Text className="text-lg font-bold">Room ID: {item.id}</Text>
-            <Text className="text-gray-500">
-              Players: {item.players.length}/{item.maxPlayers}
-            </Text>
-            <TouchableOpacity
-              onPress={() => joinRoom(item.id)}
-              className="bg-rose-500 py-2 px-4 rounded-lg mt-2"
-            >
-              <Text className="text-white text-center">Join Room</Text>
-            </TouchableOpacity>
-          </ThemedView>
+          <RoomCard {...item}/>
         )}
       />
     </FullSafeAreaScreen>

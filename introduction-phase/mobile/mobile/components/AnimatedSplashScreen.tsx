@@ -12,7 +12,7 @@ const AnimatedSplashScreen = ({ setIsLoading }: SplashProps) => {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', margin: 0, backgroundColor: '#f43f5e'}}>
-      <LottieView
+      {/* <LottieView
         source={
           isDarkMode
             ? require("@/assets/lottie/dark-background.json")
@@ -23,7 +23,7 @@ const AnimatedSplashScreen = ({ setIsLoading }: SplashProps) => {
         resizeMode="cover"
         style={{ height: '100%', width: '100%'}}
         onAnimationFinish={() => setIsLoading(false)}
-      />
+      /> */}
     </View>
   );
 };

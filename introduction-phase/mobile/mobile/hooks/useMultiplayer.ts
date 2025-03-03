@@ -23,9 +23,9 @@ const useMultiplayerSocket = () => {
     });
 
     const fetchRoom = async () => {
-      const response = await get('/api/rooms');
-      setAvailableRooms(response)
-    }
+      const response = await get("/api/rooms");
+      setAvailableRooms(response);
+    };
 
     fetchRoom();
 
@@ -63,7 +63,11 @@ const useMultiplayerSocket = () => {
 
         router.push({
           pathname: "/(root)/multiplayer/lobby",
-          params: { roomId: response.roomId },
+          params: {
+            roomId: response.roomId,
+            initialOwner: response.ownerId,
+            initialPlayers: JSON.stringify(response.players),
+          },
         });
       } catch (err) {
         console.error("Error in post request:", err);

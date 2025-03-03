@@ -32,7 +32,7 @@ a {
   @apply flex items-center justify-start;
 }
 .flex-end {
-  @apply flex items-center justify-end;
+  @apply flex items-end justify-end;
 }
 
 .flex-2 {
@@ -129,5 +129,5 @@ a {
 }
 
 .button{
-  @apply bg-rose-500 border-rose-500 shadow-md rounded-full py-3 text-white flex-center 
+  @apply bg-rose-500 border-rose-500 shadow-sm rounded-full py-3 text-white flex-center 
 }

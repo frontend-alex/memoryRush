@@ -27,7 +27,7 @@ export const socketService = (io: Server) => {
           room.players.push(playerId);
     
           io.to(roomId).emit("playerJoined", room.players);
-    
+
           socket.emit("roomInfo", { ownerId: room.ownerId, players: room.players });
         } 
       } else {
@@ -101,7 +101,7 @@ export const socketService = (io: Server) => {
     });
 
     socket.on("disconnect", (reason) => {
-      console.log("❌ Disconnected:", socket.id, "Reason:", reason);
+      console.log("Disconnected:", socket.id, "Reason:", reason);
     });
 
 
@@ -110,7 +110,7 @@ export const socketService = (io: Server) => {
     });
 
     socket.on("error", (err) => {
-      console.error("⚠️ Socket error:", err);
+      console.error("Socket error:", err);
     });
   });
 };

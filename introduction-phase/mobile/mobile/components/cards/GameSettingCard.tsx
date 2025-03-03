@@ -12,9 +12,6 @@ const GameSettingsCard = ({
     difficulty,
     id
   }: GameSettingsProps) => {
-    //stomp client hooks / client
-    const color = getDifficultyColor(difficulty);
-
     const handlePress = () => {
       Alert.alert(`Difficulty ${difficulty}`, "Are you sure?", [
         {
@@ -36,7 +33,7 @@ const GameSettingsCard = ({
         <ThemedView className="flex-between-res gap-3 p-3 rounded-lg group">
           <View className="flex flex-row gap-3 w-full ">
             <View
-              style={{ backgroundColor: color }}
+              style={{ backgroundColor: getDifficultyColor(difficulty) }}
               className="w-[5px] h-[70px] rounded-lg"
             />
             <View className="flex-col-1">

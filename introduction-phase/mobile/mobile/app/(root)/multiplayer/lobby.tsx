@@ -6,9 +6,11 @@ import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
 
 const Lobby = () => {
   const router = useRouter();
-  const { roomId } = useLocalSearchParams();
+
   const [players, setPlayers] = useState<string[]>([]);
   const [ownerId, setOwnerId] = useState<string | null>(null);
+
+  const { roomId } = useLocalSearchParams();
   const { socket, user } = useGlobalContext();
 
   useEffect(() => {
@@ -53,7 +55,9 @@ const Lobby = () => {
         }
       });
 
-      socket.emit("joinRoom", roomId, user?.$id);
+      if (!user?.$id || !ownerId || user.$id !== ownerId) {
+        socket.emit("joinRoom", roomId, user?.$id);
+      }
 
       return () => {
         socket.off("roomInfo", handleRoomInfo);
@@ -62,7 +66,7 @@ const Lobby = () => {
         socket.off("roomDeleted");
       };
     }
-  }, [socket, roomId, user?.$id]);
+  }, [socket, roomId, user?.$id, ownerId]);
 
   const handleLeaveRoom = () => {
     if (socket) {

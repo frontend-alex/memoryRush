@@ -1,20 +1,20 @@
-import humanizeDuration from 'humanize-duration';
+import humanizeDuration from "humanize-duration";
 
 import { availableCards } from "@/constants/data";
 import { useTheme } from "@/contexts/ThemeProvider";
-import { clsx, type ClassValue } from "clsx"
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import { Difficulty } from "@/types/Types";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const getBackgroundColor = () => {
-  const { isDarkMode } = useTheme();  
-  
-  return isDarkMode ? '900' : '50';  
+  const { isDarkMode } = useTheme();
+
+  return isDarkMode ? "900" : "50";
 };
 
 export const shuffle = <T>(array: Array<T>): Array<T> => {
@@ -32,11 +32,12 @@ export const shuffle = <T>(array: Array<T>): Array<T> => {
 };
 
 export const generateCards = (num: number): string[] => {
-  const count = Math.min(Math.max(num, 1), availableCards.length / 2); 
+  const count = Math.min(Math.max(num, 1), availableCards.length / 2);
 
   const selectedPairs = new Set<string>();
   while (selectedPairs.size < count) {
-    const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+    const randomCard =
+      availableCards[Math.floor(Math.random() * availableCards.length)];
     selectedPairs.add(randomCard);
   }
   const generatedCards: string[] = [...selectedPairs, ...selectedPairs];
@@ -44,12 +45,11 @@ export const generateCards = (num: number): string[] => {
   return shuffle(generatedCards);
 };
 
-
 interface ScoreOptions {
-  maxScore?: number;   // Maximum perfect score (default: 100)
-  idealTime?: number;  // Ideal time in seconds to achieve maxScore (default: 30)
-  decayRate?: number;  // Rate at which score decays beyond the ideal time (default: 0.04)
-  precision?: number;  // Decimal places for rounding the score (default: 0)
+  maxScore?: number; // Maximum perfect score (default: 100)
+  idealTime?: number; // Ideal time in seconds to achieve maxScore (default: 30)
+  decayRate?: number; // Rate at which score decays beyond the ideal time (default: 0.04)
+  precision?: number; // Decimal places for rounding the score (default: 0)
   allowBonus?: boolean;
 }
 
@@ -57,7 +57,6 @@ export const calculateScore = (
   elapsedTime: number,
   options?: ScoreOptions
 ): number => {
- 
   const {
     maxScore = 100,
     idealTime = 30,
@@ -94,7 +93,6 @@ export const calculateScore = (
   return Math.round(finalScore * factor) / factor;
 };
 
-
 export const shortEnglishHumanizer = humanizeDuration.humanizer({
   language: "shortEn",
   languages: {
@@ -111,20 +109,28 @@ export const shortEnglishHumanizer = humanizeDuration.humanizer({
   },
 });
 
-
-export const getDifficultyColor = (difficulty: Difficulty ): string => {
-  switch (difficulty) {
-    case 'medium':
-      return '#fcd34d'; 
-    case 'hard':
-      return '#ef4444'; 
-    case 'easy':
-      return '#4ade80'; 
-    default:
-      return '#000000'; 
-  }
+export const getDifficulty = (cardLength: number) => {
+  if (cardLength <= 15) {
+    return "easy";
+  } else if (cardLength <= 20) {
+    return "medium";
+  } else if (cardLength > 20) {
+    return "hard";
+  } 
 };
 
+export const getDifficultyColor = (difficulty: Difficulty): string => {
+  switch (difficulty) {
+    case "medium":
+      return "#fcd34d";
+    case "hard":
+      return "#ef4444";
+    case "easy":
+      return "#4ade80";
+    default:
+      return "#000000";
+  }
+};
 
 export const getGreeting = () => {
   const hour = new Date().getHours();
@@ -140,7 +146,6 @@ export const getGreeting = () => {
   }
 };
 
-
 interface Level {
   $id: string;
   name: string;
@@ -148,11 +153,11 @@ interface Level {
   difficulty: string;
   numOfCards: number;
   bestPlayerId: string | null;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
-export const getNextLevel = (levels: Level[], currentId: string): Level  => {
-  const currentIndex = levels.findIndex(level => level.$id === currentId);
+export const getNextLevel = (levels: Level[], currentId: string): Level => {
+  const currentIndex = levels.findIndex((level) => level.$id === currentId);
 
   if (currentIndex === levels.length - 1) {
     return levels[currentIndex - 1];

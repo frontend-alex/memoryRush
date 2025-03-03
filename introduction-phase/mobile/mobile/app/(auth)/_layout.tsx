@@ -7,7 +7,7 @@ import { useGlobalContext } from "@/libs/global-provider";
 const AuthLayout = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLogged, loading } = useGlobalContext();
+  const { isLogged, loading, user } = useGlobalContext();
   const [redirected, setRedirected] = useState(false); 
 
   useEffect(() => {
@@ -25,6 +25,9 @@ const AuthLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+      <Stack.Screen name="log-in" options={{ headerShown: false }} />
+      <Stack.Screen name="verify" options={{ headerShown: false }} />
+      <Stack.Screen name="verifying" options={{ headerShown: false }} />
     </Stack>
   );
 };
