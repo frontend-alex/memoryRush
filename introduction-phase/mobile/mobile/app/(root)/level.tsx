@@ -38,7 +38,7 @@ const Level = () => {
             <BackButton
               unsavedChanges={true}
               className="w-max"
-              path={"/game-settings"}
+              path={"/story-mode"}
             />
             <ThemedText className="font-rubik-semibold text-center">
               {levelName}

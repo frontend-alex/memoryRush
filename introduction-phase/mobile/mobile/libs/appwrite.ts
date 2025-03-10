@@ -11,9 +11,7 @@ import {
   Role,
 } from "react-native-appwrite";
 import * as Linking from "expo-linking";
-import { openAuthSessionAsync } from "expo-web-browser";
 import * as WebBrowser from 'expo-web-browser';
-import { Alert } from "react-native";
 
 export const config = {
   platform: "com.memoryRush.restate",
@@ -94,6 +92,7 @@ export async function loginWithProvider(provider: OAuthProvider) {
             name: user.name,
             avatar: user.name ? avatar.getInitials(user.name) : "",
             provider,
+            email: user.email,
           },
           [
             Permission.read(Role.user(user.$id)),

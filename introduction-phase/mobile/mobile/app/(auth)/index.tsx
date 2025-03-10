@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Image,
-  TouchableOpacity,
   Pressable,
 } from "react-native";
 
@@ -41,7 +40,7 @@ const InitialPage = () => {
       </View>
       <Pressable
         className="button"
-        onPress={() => console.log('cicki')}
+        onPress={() => router.push('/sign-in')}
       >
         <Text className="text-lg text-white font-rubik-semibold">Continue</Text>
       </Pressable>

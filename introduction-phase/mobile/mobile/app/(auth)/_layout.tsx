@@ -8,7 +8,7 @@ const AuthLayout = () => {
   const router = useRouter();
   const pathname = usePathname();
   
-  const { isLogged, loading, user } = useGlobalContext();
+  const { isLogged, loading } = useGlobalContext();
 
   const [redirected, setRedirected] = useState(false); 
 

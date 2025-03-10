@@ -3,7 +3,8 @@ import icons from "./icons";
 import { Linking } from "react-native";
 import { LoginInputsProps } from "@/types/Types";
 
-export const URL = 'http://192.168.2.9:3000'
+
+export const URL = 'https://memoryrush-production.up.railway.app'
 
 export const LoginInputs = (togglePassword: boolean): LoginInputsProps[] => [
   {
