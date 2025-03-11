@@ -5,7 +5,7 @@ import { LoginInputsProps } from "@/types/Types";
 
 
 export const URL =
-  process.env.NODE_ENV !== "development"
+  process.env.NODE_ENV === "development"
     ? 'https://memoryrush-production.up.railway.app'
     : 'http://192.168.2.9:3000';
 

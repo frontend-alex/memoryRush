@@ -179,6 +179,7 @@ const Lobby = () => {
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <LobbyUserCard
+              ownerId={ownerId}
               isOwner={isOwner}
               playerId={item}
               handleKickPlayer={handleKickPlayer}

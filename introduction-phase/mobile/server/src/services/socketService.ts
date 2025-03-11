@@ -26,10 +26,10 @@ export const socketService = (io: Server) => {
     socket.on("createRoom", (roomData: { playerId: string, userChoice: number, maxPlayers: number }) => {
       const { playerId, userChoice, maxPlayers } = roomData;
 
-      // if (userRooms[playerId]) {
-      //   socket.emit("error", { message: "You already have an active room. Please leave your current room before creating a new one." });
-      //   return;
-      // }
+      if (userRooms[playerId]) {
+        socket.emit("error", { message: "You already have an active room. Please leave your current room before creating a new one." });
+        return;
+      }
 
       const roomId = createRoom(playerId, userChoice, maxPlayers);
       const room = getRoom(roomId);
@@ -81,7 +81,6 @@ export const socketService = (io: Server) => {
 
         if (room.players.length === 0) {
           deleteRoom(roomId);
-          console.log(`Room ${roomId} deleted because it is empty.`);
         }
 
         userRooms[playerId] = null;
@@ -109,6 +108,12 @@ export const socketService = (io: Server) => {
         const room = getRoom(roomId);
         if (room) {
           room.players = room.players.filter((id) => id !== playerId);
+          
+          socket.emit("roomInfo", {
+            ownerId: room.ownerId,
+            players: room.players,
+          });
+
           io.to(roomId).emit("playerJoined", room.players);
         }
       }

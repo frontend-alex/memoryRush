@@ -9,12 +9,14 @@ import icons from "@/constants/icons";
 interface LobbyUserCardProps {
   isOwner: boolean;
   playerId: string;
+  ownerId : string | null
   handleKickPlayer: (arg0: string) => void;
 }
 
 const LobbyUserCard = ({
   isOwner,
   playerId,
+  ownerId,
   handleKickPlayer,
 }: LobbyUserCardProps) => {
   const { user } = useGlobalContext();
@@ -46,7 +48,7 @@ const LobbyUserCard = ({
           />
         </TouchableOpacity>
       )}
-      {isOwner && (
+      {ownerId === playerId && (
           <Image
             source={icons.crown}
             tintColor={"#f59e0b"}
