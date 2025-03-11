@@ -9,9 +9,9 @@ import {
 
 const router = express.Router();
 
-router.get("/rooms", (req, res) => getAllRooms(req, res) )
+router.get("/rooms", (req, res) => getAllRooms(req, res))
 
-router.post('/rooms', (req, res) => createGameRoom(req, res));
+router.post('/rooms', createGameRoom);
 
 router.post('/rooms/join', (req, res) => joinGameRoom(req, res));
 

@@ -19,6 +19,7 @@ const io = new Server(server, {
 
 const PORT = config.PORT || 3000;
 
+app.set("socketio", io);
 app.use(express.json());
 
 app.get('/', (req, res) => {

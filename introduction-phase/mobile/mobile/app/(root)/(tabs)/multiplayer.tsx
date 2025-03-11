@@ -28,7 +28,7 @@ import RoomCard from "@/components/cards/RoomCard";
 
 const Multiplayer = () => {
   const { user } = useGlobalContext();
-  const { availableRooms, isLoading } = useMultiplayerSocket();
+  const { availableRooms } = useMultiplayerSocket();
 
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -74,8 +74,10 @@ const Multiplayer = () => {
         </View>
       </TouchableWithoutFeedback>
 
-      {isLoading ? (
-        <Text className="text-lg font-rubik-bold">Loading...</Text>
+      {availableRooms?.length === 0 ? (
+        <ThemedText className="text-lg font-rubik-bold">
+          No Rooms Available ...
+        </ThemedText>
       ) : (
         <FlatList
           data={availableRooms}

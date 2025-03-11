@@ -5,13 +5,17 @@ import { saveGameResult } from "./databaseService";
 
 const rooms: { [key: string]: Room } = {};
 
-let io: Server; 
+let io: Server;
 
 export const setSocketServer = (socketIo: Server) => {
   io = socketIo;
 };
 
-export const createRoom = (playerId: string, userChoice: number, maxPlayers: number): string => {
+export const createRoom = (
+  playerId: string,
+  userChoice: number,
+  maxPlayers: number
+): string => {
   const roomId = `room_${Math.random().toString(36).substr(2, 9)}`;
   const cards = shuffle(generateCards(userChoice)).map((name, index) => ({
     id: index,
@@ -31,15 +35,17 @@ export const createRoom = (playerId: string, userChoice: number, maxPlayers: num
     ownerId: playerId,
   };
 
-  if (io) {
-    io.emit("roomCreated", rooms[roomId]);
-  }
-
   return roomId;
 };
+
+
 export const joinRoom = (roomId: string, playerId: string): boolean => {
   const room = getRoom(roomId);
-  if (room && !room.players.includes(playerId) && room.players.length < room.maxPlayers) {
+  if (
+    room &&
+    !room.players.includes(playerId) &&
+    room.players.length < room.maxPlayers
+  ) {
     room.players.push(playerId);
     return true;
   }
@@ -47,7 +53,9 @@ export const joinRoom = (roomId: string, playerId: string): boolean => {
 };
 
 export const getAvailableRooms = (): Room[] => {
-  return Object.values(rooms).filter((room) => room.players.length < room.maxPlayers && !room.gameOver);
+  return Object.values(rooms).filter(
+    (room) => room.players.length < room.maxPlayers && !room.gameOver
+  );
 };
 
 export const getRoom = (roomId: string): Room | undefined => {
@@ -70,7 +78,11 @@ export const kickPlayer = (roomId: string, playerId: string): void => {
   }
 };
 
-export const flipCard = (roomId: string, card: Card, playerId: string): Room | null => {
+export const flipCard = (
+  roomId: string,
+  card: Card,
+  playerId: string
+): Room | null => {
   const room = rooms[roomId];
   if (!room || room.currentPlayer !== playerId) return null;
 
@@ -79,20 +91,26 @@ export const flipCard = (roomId: string, card: Card, playerId: string): Room | n
     const [firstCard, secondCard] = room.flippedCards;
     if (firstCard.name === secondCard.name) {
       room.cards = room.cards.map((c) =>
-        c.id === firstCard.id || c.id === secondCard.id ? { ...c, matched: true } : c
+        c.id === firstCard.id || c.id === secondCard.id
+          ? { ...c, matched: true }
+          : c
       );
     } else {
       setTimeout(() => {
         room.flippedCards = [];
       }, 750);
     }
-    room.currentPlayer = room.players[(room.players.indexOf(playerId) + 1) % room.players.length];
+    room.currentPlayer =
+      room.players[(room.players.indexOf(playerId) + 1) % room.players.length];
   }
 
   return room;
 };
 
-export const endGame = async (roomId: string, elapsedTime: number): Promise<void> => {
+export const endGame = async (
+  roomId: string,
+  elapsedTime: number
+): Promise<void> => {
   const room = rooms[roomId];
   if (!room) return;
 

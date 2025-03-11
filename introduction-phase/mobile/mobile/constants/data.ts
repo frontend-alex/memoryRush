@@ -4,7 +4,13 @@ import { Linking } from "react-native";
 import { LoginInputsProps } from "@/types/Types";
 
 
-export const URL = 'https://memoryrush-production.up.railway.app'
+export const URL =
+  process.env.NODE_ENV !== "development"
+    ? 'https://memoryrush-production.up.railway.app'
+    : 'http://192.168.2.9:3000';
+
+
+export const frontendURL = "http://localhost:3000";
 
 export const LoginInputs = (togglePassword: boolean): LoginInputsProps[] => [
   {
@@ -43,7 +49,7 @@ export const settings = [
     title: "Play on Web",
     icon: icons.globe,
     showLink: true,
-    onPress: () => Linking.openURL("https://memory-rush.vercel.app/")
+    onPress: () => Linking.openURL("https://memory-rush.vercel.app/"),
   },
   {
     title: "Notifications",
@@ -61,7 +67,8 @@ export const settings = [
     title: "Privacy & Policy",
     icon: icons.cookie,
     showLink: true,
-    onPress: () => Linking.openURL("https://memory-rush.vercel.app/privacy-policy")
+    onPress: () =>
+      Linking.openURL("https://memory-rush.vercel.app/privacy-policy"),
   },
   {
     title: "Invite Friends",
@@ -69,28 +76,47 @@ export const settings = [
   },
 ];
 
-
 export const availableCards: string[] = [
-  "bell", "bell",
-  "kiss", "kiss",
-  "lightbulb", "lightbulb",
-  "lotus", "lotus",
-  "magnet", "magnet",
-  "money", "money",
-  "owl", "owl",
-  "rain", "rain",
-  "salaryman", "salaryman",
-  "schoolgirl", "schoolgirl",
-  "ship", "ship",
-  "soccer", "soccer",
-  "squirrel", "squirrel",
-  "strength", "strength",
-  "sun", "sun",
-  "sunset", "sunset",
-  "superhero", "superhero",
-  "swimming", "swimming",
-  "thanks", "thanks",
-  "tree", "tree"
+  "bell",
+  "bell",
+  "kiss",
+  "kiss",
+  "lightbulb",
+  "lightbulb",
+  "lotus",
+  "lotus",
+  "magnet",
+  "magnet",
+  "money",
+  "money",
+  "owl",
+  "owl",
+  "rain",
+  "rain",
+  "salaryman",
+  "salaryman",
+  "schoolgirl",
+  "schoolgirl",
+  "ship",
+  "ship",
+  "soccer",
+  "soccer",
+  "squirrel",
+  "squirrel",
+  "strength",
+  "strength",
+  "sun",
+  "sun",
+  "sunset",
+  "sunset",
+  "superhero",
+  "superhero",
+  "swimming",
+  "swimming",
+  "thanks",
+  "thanks",
+  "tree",
+  "tree",
 ];
 
 export const cardImages: Record<string, any> = {
@@ -121,65 +147,61 @@ export const cardImages: Record<string, any> = {
   tree: require("@/assets/images/tree.png"),
 };
 
-
-
-
-export const SortCards = (setCards: React.Dispatch<React.SetStateAction<any[]>>) => [
-    {
-      label: "Sort by Difficulty",
-      icon: '',  
-      onPress: () => {
-        setCards((prevCards) => 
-            [...prevCards].sort((a, b) => a.numOfCards - b.numOfCards)
-          );
-      },
+export const SortCards = (
+  setCards: React.Dispatch<React.SetStateAction<any[]>>
+) => [
+  {
+    label: "Sort by Difficulty",
+    icon: "",
+    onPress: () => {
+      setCards((prevCards) =>
+        [...prevCards].sort((a, b) => a.numOfCards - b.numOfCards)
+      );
     },
-    {
-      label: "Shuffle",
-      icon: '', 
-      onPress: () => {
-        setCards((prevCards) => [...prevCards].sort(() => Math.random() - 0.5));
-      },
+  },
+  {
+    label: "Shuffle",
+    icon: "",
+    onPress: () => {
+      setCards((prevCards) => [...prevCards].sort(() => Math.random() - 0.5));
     },
-  ];
+  },
+];
 
+export const createGameButtons = [
+  {
+    name: 2,
+    id: 0,
+  },
+  {
+    name: 3,
+    id: 1,
+  },
+  {
+    name: 4,
+    id: 2,
+  },
+];
 
-
-
-  export const createGameButtons = [
-    {
-      name: 2,
-      id: 0
-    }, 
-    {
-      name: 3,
-      id: 1
-    },
-    {
-      name: 4,
-      id: 2
-    }
-  ]
-
-  export const createGameCardsButtons = [
-    {
-      name: 15,
-      id: 0
-    }, 
-    {
-      name: 20,
-      id: 1
-    },
-    {
-      name: 25,
-      id: 3
-    },
-    {
-      name: 30,
-      id: 4
-    },
-    {
-      name: 40,
-      id: 5
-    }
-  ]
+export const createGameCardsButtons = [
+  {
+    name: 15,
+    id: 0,
+  },
+  {
+    name: 20,
+    id: 1,
+  },
+  {
+    name: 25,
+    id: 3,
+  },
+  {
+    name: 30,
+    id: 4,
+  },
+  {
+    name: 40,
+    id: 5,
+  },
+];

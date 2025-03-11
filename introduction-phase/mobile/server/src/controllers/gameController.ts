@@ -7,16 +7,28 @@ export const createGameRoom = async (req: Request, res: Response): Promise<void>
   try {
     const { playerId, userChoice, maxPlayers } = req.body;
     if (!playerId || !userChoice || !maxPlayers) {
-      res.status(400).json({ message: 'Player ID, Card or Maximum players is missing' });
+      res.status(400).json({ message: "Missing parameters" });
       return;
     }
 
     const roomId = createRoom(playerId, userChoice, maxPlayers);
-    res.status(201).json({ roomId });
+    const room = getRoom(roomId); 
+
+    if (!room) {
+      res.status(404).json({ message: "Room not found" });
+      return;
+    }
+
+    req.app.get("socketio").to(roomId).emit("roomInfo", {
+      ownerId: room.ownerId,
+      players: room.players,
+    });
+
+    res.status(201).json({ roomId, ownerId: room.ownerId, players: room.players });
     
   } catch (error) {
-    console.error('Error creating game room:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error creating game room:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -45,6 +57,7 @@ export const joinGameRoom = async (req: Request, res: Response): Promise<void> =
     }
 
     res.status(200).json({ message: 'Player joined successfully' });
+
   } catch (error) {
     console.error('Error joining game room:', error);
     res.status(500).json({ message: 'Internal server error' });

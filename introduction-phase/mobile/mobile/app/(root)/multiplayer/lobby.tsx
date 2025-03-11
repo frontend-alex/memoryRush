@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, FlatList, Alert } from "react-native";
+import { View, Text, Button, FlatList, Alert, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useGlobalContext } from "@/libs/global-provider";
 import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
+import SplashScreen from "@/components/SplashScreen";
 
 const Lobby = () => {
   const router = useRouter();
+  const { roomId } = useLocalSearchParams();
+  const roomIdString = Array.isArray(roomId) ? roomId[0] : roomId; // Handle array case
+  const { socket, user } = useGlobalContext();
 
   const [players, setPlayers] = useState<string[]>([]);
   const [ownerId, setOwnerId] = useState<string | null>(null);
-
-  const { roomId } = useLocalSearchParams();
-  const { socket, user } = useGlobalContext();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (socket) {
+    if (socket && roomIdString) {
+      console.log("Socket is connected and roomId is available:", roomIdString); // Debugging
+
+      // Join the room
+      socket.emit("joinRoom", roomIdString, user?.$id);
+
       const handleRoomInfo = ({
         ownerId,
         players,
@@ -22,51 +29,63 @@ const Lobby = () => {
         ownerId: string;
         players: string[];
       }) => {
-        console.log(
-          "Received roomInfo event with ownerId:",
-          ownerId,
-          "and players:",
-          players
-        );
         setOwnerId(ownerId);
         setPlayers(players);
+        setIsLoading(false);
       };
 
       const handlePlayerJoined = (updatedPlayers: string[]) => {
-        console.log(
-          "Received playerJoined event with players:",
-          updatedPlayers
-        );
         setPlayers(updatedPlayers);
+      };
+
+      const handlePlayerKicked = (kickedPlayerId: string) => {
+        setPlayers((prevPlayers) => prevPlayers.filter((id) => id !== kickedPlayerId));
+        if (kickedPlayerId === user?.$id) {
+          Alert.alert("You have been kicked from the room.");
+          router.push("/(root)/(tabs)/multiplayer");
+        }
+      };
+
+      const handleRoomDeleted = ({ roomId: deletedRoomId }: { roomId: string }) => {
+        if (deletedRoomId === roomIdString) {
+          Alert.alert("Room Deleted", "The room has been deleted.");
+          router.push("/(root)/(tabs)/multiplayer");
+        }
       };
 
       socket.on("roomInfo", handleRoomInfo);
       socket.on("playerJoined", handlePlayerJoined);
-      socket.on("gameStarted", () => {
-        router.push({
-          pathname: "/(root)/multiplayer/multiplayer-game",
-          params: { roomId },
-        });
-      });
-      socket.on("roomDeleted", ({ roomId: deletedRoomId }) => {
-        if (deletedRoomId === roomId) {
-          Alert.alert("Room Deleted", "The room has been deleted.");
-          router.push("/");
-        }
-      });
-
-      if (!user?.$id || !ownerId || user.$id !== ownerId) {
-        socket.emit("joinRoom", roomId, user?.$id);
-      }
+      socket.on("playerKicked", handlePlayerKicked);
+      socket.on("roomDeleted", handleRoomDeleted);
 
       return () => {
         socket.off("roomInfo", handleRoomInfo);
         socket.off("playerJoined", handlePlayerJoined);
-        socket.off("gameStarted");
-        socket.off("roomDeleted");
+        socket.off("playerKicked", handlePlayerKicked);
+        socket.off("roomDeleted", handleRoomDeleted);
       };
     }
-  }, [socket, roomId, user?.$id, ownerId]);
+  }, [socket, roomIdString, user?.$id]);
+
+  const handleKickPlayer = (playerId: string) => {
+    if (socket) {
+      socket.emit("kickPlayer", { roomId: roomIdString, playerId });
+    }
+  };
+
+  const handleDeleteRoom = () => {
+    if (socket) {
+      Alert.alert("Delete Room", "Are you sure you want to delete the room?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: () => {
+            socket.emit("deleteRoom", roomIdString);
+          },
+        },
+      ]);
+    }
+  };
 
   const handleLeaveRoom = () => {
     if (socket) {
@@ -75,7 +94,7 @@ const Lobby = () => {
         {
           text: "Leave",
           onPress: () => {
-            socket.emit("leaveRoom", roomId, user?.$id);
+            socket.emit("leaveRoom", roomIdString, user?.$id);
             router.push("/(root)/(tabs)/multiplayer");
           },
         },
@@ -83,22 +102,14 @@ const Lobby = () => {
     }
   };
 
-  const handleKickPlayer = (playerId: string) => {
-    if (socket) {
-      socket.emit("kickPlayer", { roomId, playerId });
-      Alert.alert(
-        "Player Kicked",
-        `Player ${playerId} has been kicked from the room.`
-      );
-    }
-  };
+  if (isLoading) return <SplashScreen />;
 
   const isOwner = ownerId === user?.$id;
 
   return (
     <FullSafeAreaScreen>
       <View>
-        <Text>Lobby for Room: {roomId}</Text>
+        <Text>Lobby for Room: {roomIdString}</Text>
         <Text>Room Owner: {ownerId}</Text>
         <FlatList
           data={players}
@@ -106,7 +117,7 @@ const Lobby = () => {
           renderItem={({ item }) => (
             <View>
               <Text>Player: {item}</Text>
-              {isOwner && (
+              {isOwner && item !== user?.$id && ( // Don't allow kicking yourself
                 <Button title="Kick" onPress={() => handleKickPlayer(item)} />
               )}
             </View>
@@ -116,11 +127,11 @@ const Lobby = () => {
           <>
             <Button
               title="Start Game"
-              onPress={() => socket?.emit("startGame", roomId, user?.$id)}
+              onPress={() => socket?.emit("startGame", roomIdString, user?.$id)}
             />
             <Button
               title="Delete Room"
-              onPress={() => socket?.emit("deleteRoom", roomId)}
+              onPress={handleDeleteRoom}
               color="red"
             />
           </>

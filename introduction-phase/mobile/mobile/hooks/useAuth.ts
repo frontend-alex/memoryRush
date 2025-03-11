@@ -4,6 +4,7 @@ import { account, avatar, config, databases, loginUser, loginWithProvider } from
 import { ID, OAuthProvider, Permission, Role } from "react-native-appwrite";
 import { useGlobalContext } from "@/libs/global-provider";
 import { router } from "expo-router";
+import { frontendURL } from "@/constants/data";
 
 interface FormDataProps {
   name: string;
@@ -86,8 +87,10 @@ const useAuth = () => {
 
   const handleSendOTP = async () => {
     try {
-      const response = await account.createVerification("http://192.168.2.9:8081/verify");
+      
+      const response = await account.createVerification(`${frontendURL}/verify`);
       Alert.alert("OTP Sent", "Check your email for the OTP.");
+
     } catch (error) {
       console.error("Error sending OTP:", error);
       Alert.alert("Error", "Failed to send OTP. Please try again.");
