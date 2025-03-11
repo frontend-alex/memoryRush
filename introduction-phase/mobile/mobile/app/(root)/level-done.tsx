@@ -62,7 +62,7 @@ const LevelDone = () => {
         className="justify-between flex-col-5 h-full"
       >
         <View className="flex justify-start items-start">
-          <BackButton path={"/game-settings"} />
+          <BackButton path={"/story-mode"} />
         </View>
         <View className="flex-center gap-3">
           <LottieView

@@ -9,32 +9,31 @@ import useAuth from "@/hooks/useAuth";
 const VerifyPage = () => {
   const { userId, secret } = useLocalSearchParams();
 
-  const { handleVerifyOTP } = useAuth();
+  // useEffect(() => {
+  //   const verifyEmail = async () => {
+  //     try {
+  //       if (typeof userId === "string" && typeof secret === "string") {
+  //         await account.updateVerification(userId, secret);
 
-  useEffect(() => {
-    const verifyEmail = async () => {
-      try {
-        if (typeof userId === "string" && typeof secret === "string") {
-          await account.updateVerification(userId, secret);
+  //         // await handleVerifyOTP()
 
-          await handleVerifyOTP()
 
-          router.push("/home");
-        } else {
-          throw new Error("Invalid verification link.");
-        }
-      } catch (error: any) {
-        console.error("Verification error:", error);
-        Alert.alert(
-          "Error",
-          error.message || "Failed to verify email. Please try again."
-        );
-        router.replace("/(auth)/sign-in");
-      }
-    };
+  //         router.push("/home");
+  //       } else {
+  //         throw new Error("Invalid verification link.");
+  //       }
+  //     } catch (error: any) {
+  //       console.error("Verification error:", error);
+  //       Alert.alert(
+  //         "Error",
+  //         error.message || "Failed to verify email. Please try again."
+  //       );
+  //       router.replace("/(auth)/sign-in");
+  //     }
+  //   };
 
-    verifyEmail();
-  }, [userId, secret]);
+  //   verifyEmail();
+  // }, [userId, secret]);
 
   return (
     <FullSafeAreaScreen className="flex-1 justify-center items-center">

@@ -11,7 +11,7 @@ import {
   Role,
 } from "react-native-appwrite";
 import * as Linking from "expo-linking";
-import * as WebBrowser from 'expo-web-browser';
+import * as WebBrowser from "expo-web-browser";
 
 export const config = {
   platform: "com.memoryRush.restate",
@@ -39,135 +39,26 @@ export async function loginWithProvider(provider: OAuthProvider) {
     const redirectUri = Linking.createURL("/");
 
     const response = await account.createOAuth2Token(provider, redirectUri);
-    console.log("OAuth2 Token Response:", response);
     if (!response) throw new Error("Create OAuth2 token failed");
 
     const browserResult = await WebBrowser.openAuthSessionAsync(
       response.toString(),
       redirectUri
     );
-    console.log("Browser Result:", browserResult);
-
-    if (browserResult.type !== "success") {
-      console.error("OAuth login failed. Browser result:", browserResult);
-      throw new Error("OAuth login failed");
-    }
+    if (browserResult.type !== "success")
+      throw new Error("Create OAuth2 token failed");
 
     const url = new URL(browserResult.url);
     const secret = url.searchParams.get("secret")?.toString();
     const userId = url.searchParams.get("userId")?.toString();
-    console.log("Secret:", secret);
-    console.log("User ID:", userId);
-
-    if (!secret || !userId) throw new Error("OAuth login failed");
+    if (!secret || !userId) throw new Error("Create OAuth2 token failed");
 
     const session = await account.createSession(userId, secret);
     if (!session) throw new Error("Failed to create session");
 
     const user = await account.get();
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("Failed to retrieve user information");
 
-    console.log("Authenticated User:", user);
-
-    let existingUser;
-    try {
-      existingUser = await databases.listDocuments(
-        config.databaseId!,
-        config.userCollectionId!,
-        [Query.equal("userId", user.$id)]
-      );
-    } catch (error) {
-      console.error("Error checking user existence:", error);
-      throw new Error("Failed to check user in database");
-    }
-
-    if (existingUser.documents.length === 0) {
-      try {
-        await databases.createDocument(
-          config.databaseId!,
-          config.userCollectionId!,
-          ID.unique(),
-          {
-            userId: user.$id,
-            name: user.name,
-            avatar: user.name ? avatar.getInitials(user.name) : "",
-            provider,
-            email: user.email,
-          },
-          [
-            Permission.read(Role.user(user.$id)),
-            Permission.update(Role.user(user.$id)),
-            Permission.delete(Role.user(user.$id)),
-          ]
-        );
-        console.log("User saved in database.");
-      } catch (error) {
-        console.error("Error saving user to database:", error);
-        throw new Error("Failed to save user in database");
-      }
-    } else {
-      console.log("User already exists in database.");
-    }
-
-    return true;
-  } catch (error) {
-    console.error("OAuth Login Error:", error);
-    return false;
-  }
-}
-
-export async function registerUser(email: string, name: string, password: string) {
-  try {
-    const existingUser = await databases.listDocuments(
-      config.databaseId!,
-      config.userCollectionId!,
-      [Query.equal("email", email)]
-    );
-
-    if (existingUser.documents.length > 0) {
-      throw new Error("A user with this email already exists.");
-    }
-
-    const user = await account.create(ID.unique(), email, password, name);
-
-    await databases.createDocument(
-      config.databaseId!,
-      config.userCollectionId!,
-      ID.unique(),
-      {
-        userId: user.$id,
-        name: name,
-        email: email,
-        avatar: name ? avatar.getInitials(name) : "",
-        provider: "email",
-      },
-      [
-        Permission.read(Role.user(user.$id)),
-        Permission.update(Role.user(user.$id)),
-        Permission.delete(Role.user(user.$id)),
-      ]
-    );
-
-
-    const session = await account.createEmailPasswordSession(email, password);
-    if (!session) throw new Error("Failed to create session");
-
-    return true;
-  } catch (error) {
-    console.error("Registration error:", error);
-    throw error; 
-  }
-}
-
-export async function loginUser(email: string, password: string) {
-  try {
-    const session = await account.createEmailPasswordSession(email, password);
-    if (!session) throw new Error("Failed to create session");
-
-    const user = await account.get();
-    if (!user) throw new Error("User not found");
-
-    // Check if user exists in the database
     const existingUser = await databases.listDocuments(
       config.databaseId!,
       config.userCollectionId!,
@@ -175,13 +66,29 @@ export async function loginUser(email: string, password: string) {
     );
 
     if (existingUser.documents.length === 0) {
-      throw new Error("User not found in database");
+      await databases.createDocument(
+        config.databaseId!,
+        config.userCollectionId!,
+        ID.unique(),
+        {
+          userId: user.$id,
+          name: user.name,
+          email: user.email,
+          avatar: user.name ? avatar.getInitials(user.name) : "",
+          provider: provider,
+        },
+        [
+          Permission.read(Role.user(user.$id)),
+          Permission.update(Role.user(user.$id)),
+          Permission.delete(Role.user(user.$id)),
+        ]
+      );
     }
 
     return true;
   } catch (error) {
-    console.error("Login error:", error);
-    throw error; // Propagate the error to the caller
+    console.error("OAuth Login Error:", error);
+    return false;
   }
 }
 
@@ -194,30 +101,37 @@ export async function logout() {
     return false;
   }
 }
-
 export async function getCurrentUser() {
   try {
-    const result = await account.get();
-    if (!result.$id) return null;
+    const session = await account.getSession('current');
 
-    const userInDatabase = await databases.listDocuments(
-      config.databaseId!, 
-      config.userCollectionId!, 
-      [Query.equal("userId", result.$id)]
-    );
+    if (session && session.userId) {
+      const userId = session.userId;
 
-    if (userInDatabase.documents.length === 0) {
-      return null;
+      const userDocument = await databases.listDocuments(
+        config.databaseId!,
+        config.userCollectionId!, 
+        [
+          Query.equal("userId", userId) 
+        ]
+      );
+
+      if (userDocument.documents.length > 0) {
+        const user = userDocument.documents[0];
+        const userAvatar = avatar.getInitials(user.name);
+
+        return {
+          ...user,
+          avatar: userAvatar.toString(),
+        };
+      } else {
+        return null; 
+      }
     }
 
-    const userAvatar = avatar.getInitials(result.name);
-
-    return {
-      ...result,
-      avatar: userAvatar.toString(),
-    };
+    return null;
   } catch (error) {
-    console.error("Error fetching current user:", error);
+    console.error("Error retrieving user:", error);
     return null;
   }
 }
@@ -284,9 +198,8 @@ export async function getUserById(params: { id: string }) {
   }
 }
 
-
 export const saveGameData = async (
-  levelId: string | string [], 
+  levelId: string | string[],
   gameDetails: { timeTaken: number; score: number; bestScore: number }
 ) => {
   try {
@@ -324,7 +237,7 @@ export const saveGameData = async (
         ID.unique(),
         {
           userId,
-          levelId, 
+          levelId,
           timeTaken,
           score,
           bestScore: score,

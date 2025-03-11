@@ -10,6 +10,8 @@ import {
   createRoom,
 } from "./gameService";
 
+const userRooms: Record<string, string | null> = {};
+
 export const socketService = (io: Server) => {
   setSocketServer(io);
 
@@ -24,22 +26,31 @@ export const socketService = (io: Server) => {
     socket.on("createRoom", (roomData: { playerId: string, userChoice: number, maxPlayers: number }) => {
       const { playerId, userChoice, maxPlayers } = roomData;
 
+      if (userRooms[playerId]) {
+        socket.emit("error", { message: "You already have an active room. Please leave your current room before creating a new one." });
+        return;
+      }
+
       const roomId = createRoom(playerId, userChoice, maxPlayers);
       const room = getRoom(roomId);
-    
+
       if (room) {
+        userRooms[playerId] = roomId;
+
         socket.join(roomId);
-    
-        console.log(`Room created with ID: ${roomId}`); 
+        console.log(`Room created with ID: ${roomId}`);
         console.log(`Emitting roomCreated to client`);
-    
+
         socket.emit("roomCreated", { roomId, playerId });
-    
+
+        const availableRooms = getAvailableRooms();
+        io.emit("availableRooms", availableRooms);
+
         io.to(roomId).emit("roomInfo", {
           ownerId: room.ownerId,
           players: room.players,
         });
-    
+
         io.to(roomId).emit("playerJoined", [playerId]);
       } else {
         socket.emit("error", { message: "Error creating room" });
@@ -67,36 +78,46 @@ export const socketService = (io: Server) => {
       if (room) {
         room.players = room.players.filter((id) => id !== playerId);
         io.to(roomId).emit("playerLeft", { playerId });
+
         if (room.players.length === 0) {
           deleteRoom(roomId);
           console.log(`Room ${roomId} deleted because it is empty.`);
         }
+
+        userRooms[playerId] = null;
+
+        const availableRooms = getAvailableRooms();
+        io.emit("availableRooms", availableRooms);
       }
     });
 
-    // Handle request to delete a room
     socket.on("deleteRoom", (roomId) => {
-      io.to(roomId).emit("roomDeleted", { roomId }); // Notify all players in the room
-      deleteRoom(roomId); // Delete the room
+      const room = getRoom(roomId);
+      if (room) {
+        room.players.forEach((playerId) => {
+          userRooms[playerId] = null;
+        });
+      }
+
+      io.to(roomId).emit("roomDeleted", { roomId });
+      deleteRoom(roomId); 
     });
 
-    // Handle request to kick a player from the room
     socket.on(
       "kickPlayer",
       ({ roomId, playerId }: { roomId: string; playerId: string }) => {
         const room = getRoom(roomId);
         if (room) {
           room.players = room.players.filter((id) => id !== playerId);
-          io.to(roomId).emit("playerJoined", room.players); // Update all players in the room
+          io.to(roomId).emit("playerJoined", room.players);
         }
       }
     );
 
-    // Handle start game request (only room owner can start)
     socket.on("startGame", (roomId, playerId) => {
       const room = getRoom(roomId);
       if (room && room.ownerId === playerId) {
-        io.to(roomId).emit("gameStarted"); 
+        io.to(roomId).emit("gameStarted");
       } else {
         socket.emit("notOwner", {
           message: "Only the room owner can start the game.",
@@ -104,42 +125,43 @@ export const socketService = (io: Server) => {
       }
     });
 
-    // Handle card flipping
     socket.on("flipCard", (roomId: string, card: any) => {
       const updatedRoom = flipCard(roomId, card, socket.id);
       if (updatedRoom) {
-        io.to(roomId).emit("cardFlipped", card); // Notify all players that a card was flipped
+        io.to(roomId).emit("cardFlipped", card);
         if (updatedRoom.flippedCards.length === 2) {
           const [firstCard, secondCard] = updatedRoom.flippedCards;
           if (firstCard.name === secondCard.name) {
-            io.to(roomId).emit("cardsMatched", [firstCard, secondCard]); // If cards match, notify players
+            io.to(roomId).emit("cardsMatched", [firstCard, secondCard]);
           } else {
             setTimeout(() => {
-              io.to(roomId).emit("resetCards"); // Reset cards after a short delay if they don't match
+              io.to(roomId).emit("resetCards");
             }, 750);
           }
-          io.to(roomId).emit("nextTurn", updatedRoom.currentPlayer); // Notify who’s next
+          io.to(roomId).emit("nextTurn", updatedRoom.currentPlayer);
         }
       }
     });
 
-    // Handle game over logic
     socket.on("gameOver", (roomId: string, elapsedTime: number) => {
-      endGame(roomId, elapsedTime); // Process the game end logic
-      io.to(roomId).emit("gameSaved"); // Notify everyone that the game is saved
+      endGame(roomId, elapsedTime);
+      io.to(roomId).emit("gameSaved");
     });
 
-    // Handle disconnection
     socket.on("disconnect", (reason) => {
       console.log("Disconnected:", socket.id, "Reason:", reason);
+
+      const userId = socket.id; 
+      if (userRooms[userId]) {
+        userRooms[userId] = null;
+      }
+
     });
 
-    // Handle connection error
     socket.on("connect_error", (err) => {
       console.error("Connection error:", err);
     });
 
-    // Handle general socket errors
     socket.on("error", (err) => {
       console.error("Socket error:", err);
     });

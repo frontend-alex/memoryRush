@@ -10,8 +10,6 @@ export const URL =
     : 'http://192.168.2.9:3000';
 
 
-export const frontendURL = "http://localhost:3000";
-
 export const LoginInputs = (togglePassword: boolean): LoginInputsProps[] => [
   {
     name: "Username",
