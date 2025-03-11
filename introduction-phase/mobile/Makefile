@@ -1,5 +1,5 @@
-push-gitlab:
+gitlab:
 	git push origin 
 
-push-github:
+github:
 	git push github
