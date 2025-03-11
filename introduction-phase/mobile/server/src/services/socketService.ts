@@ -26,10 +26,10 @@ export const socketService = (io: Server) => {
     socket.on("createRoom", (roomData: { playerId: string, userChoice: number, maxPlayers: number }) => {
       const { playerId, userChoice, maxPlayers } = roomData;
 
-      if (userRooms[playerId]) {
-        socket.emit("error", { message: "You already have an active room. Please leave your current room before creating a new one." });
-        return;
-      }
+      // if (userRooms[playerId]) {
+      //   socket.emit("error", { message: "You already have an active room. Please leave your current room before creating a new one." });
+      //   return;
+      // }
 
       const roomId = createRoom(playerId, userChoice, maxPlayers);
       const room = getRoom(roomId);

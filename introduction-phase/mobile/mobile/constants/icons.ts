@@ -27,6 +27,9 @@ import book from '@/assets/icons/book.png';
 import retry from '@/assets/icons/rotate-ccw.png';
 import plus from '@/assets/icons/plus.png';
 import link from '@/assets/icons/link.png';
+import copy from '@/assets/icons/copy.png'
+import hashtag from '@/assets/icons/hashtag.png';
+import crown from '@/assets/icons/crown.png';
 
 export default {
   googleIcon, 
@@ -57,5 +60,8 @@ export default {
   swrod,
   retry,
   plus,
-  link
+  link,
+  copy,
+  hashtag,
+  crown
 }

@@ -101,6 +101,7 @@ export async function logout() {
     return false;
   }
 }
+
 export async function getCurrentUser() {
   try {
     const session = await account.getSession('current');
@@ -197,6 +198,22 @@ export async function getUserById(params: { id: string }) {
     console.log(err);
   }
 }
+
+export async function getUsersByIds(params: { ids: string[] }) {
+  try {
+    const userPromises = params.ids.map((id) =>
+      databases.getDocument(config.databaseId!, config.userCollectionId!, id)
+    );
+
+    const users = await Promise.all(userPromises);
+
+    return users; // ✅ Returns an array of user objects
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return [];
+  }
+}
+
 
 export const saveGameData = async (
   levelId: string | string[],

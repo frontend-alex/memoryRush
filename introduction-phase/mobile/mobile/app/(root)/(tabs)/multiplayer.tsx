@@ -80,6 +80,8 @@ const Multiplayer = () => {
         </ThemedText>
       ) : (
         <FlatList
+          contentContainerClassName="pb-64"
+          showsVerticalScrollIndicator={false}
           data={availableRooms}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <RoomCard {...item} />}

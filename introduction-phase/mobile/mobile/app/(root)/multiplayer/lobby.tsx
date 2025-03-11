@@ -1,22 +1,27 @@
+import icons from "@/constants/icons";
+import SplashScreen from "@/components/SplashScreen";
+import BackButton from "@/components/ui/goBackButton";
+import Clipboard from "@react-native-clipboard/clipboard";
+import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
+
 import React, { useEffect, useState } from "react";
+import { useGlobalContext } from "@/libs/global-provider";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { ThemedIcon, ThemedText } from "@/components/ui/themed-components";
 import {
   View,
   Text,
-  Button,
-  FlatList,
   Alert,
-  ActivityIndicator,
   Image,
   Pressable,
+  TouchableOpacity,
+  Button,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useGlobalContext } from "@/libs/global-provider";
-import FullSafeAreaScreen from "@/components/FullSafeAreaScreen";
-import SplashScreen from "@/components/SplashScreen";
-import BackButton from "@/components/ui/goBackButton";
-import { ThemedIcon, ThemedText } from "@/components/ui/themed-components";
-import Icons from "@/constants/icons";
-import icons from "@/constants/icons";
+import Toast from "@/components/ui/toast";
+import { FlatList } from "react-native-gesture-handler";
+import { useAppwrite } from "@/hooks/useAppwrite";
+import { getUsersByIds } from "@/libs/appwrite";
+import LobbyUserCard from "@/components/cards/LobbyUserCard";
 
 const Lobby = () => {
   const router = useRouter();
@@ -29,6 +34,7 @@ const Lobby = () => {
   const [players, setPlayers] = useState<string[]>([]);
   const [ownerId, setOwnerId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [toggleToast, setToggleToast] = useState(false);
 
   useEffect(() => {
     if (socket && roomIdString) {
@@ -134,46 +140,69 @@ const Lobby = () => {
           <Image source={icons.logout} />
         </Pressable>
       </View>
-      <View className="flex flex-row gap-1 items-center">
-        <ThemedText className="font-rubik-bold text-2xl">Room ID: </ThemedText>
-        <Pressable>
+      <View>
+        <View className="flex flex-row gap-1 items-center">
+          <ThemedIcon icon={icons.hashtag} />
+          <TouchableOpacity
+            className="flex flex-row gap-1"
+            onPress={() => setToggleToast(true)}
+          >
+            <Text className="uppercase text-2xl font-rubik-bold text-stone-400">
+              {roomIdString.split("_")[1]}
+            </Text>
+            <Image
+              className="size-3"
+              tintColor={"#a8a29e"}
+              source={icons.copy}
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="flex flex-row gap-1 items-center">
+          <ThemedIcon icon={icons.user} />
           <Text className="uppercase text-2xl font-rubik-bold text-stone-400">
-            {roomIdString.split("_")[1]}
+            {players.length} / 3
           </Text>
-        </Pressable>
+        </View>
       </View>
 
-      {/* <View>
-        <Text>Lobby for Room: {roomIdString}</Text>
-        <Text>Room Owner: {ownerId}</Text>
+      {toggleToast && (
+        <Toast
+          message="RoomID successfully coppied"
+          variant="success"
+          setToast={setToggleToast}
+        />
+      )}
+
+      <View>
         <FlatList
           data={players}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
-            <View>
-              <Text>Player: {item}</Text>
-              {isOwner && item !== user?.$id && (
-                <Button title="Kick" onPress={() => handleKickPlayer(item)} />
-              )}
-            </View>
+            <LobbyUserCard
+              isOwner={isOwner}
+              playerId={item}
+              handleKickPlayer={handleKickPlayer}
+            />
           )}
         />
-        {isOwner ? (
-          <>
-            <Button
-              title="Start Game"
-              onPress={() => socket?.emit("startGame", roomIdString, user?.$id)}
-            />
-            <Button
-              title="Delete Room"
+        {isOwner && (
+          <View className="flex flex-row gap-3 mt-5">
+            <TouchableOpacity
+              className="py-4 w-1/2 flex-center bg-danger/60 px-4 rounded-lg"
               onPress={handleDeleteRoom}
-              color="red"
-            />
-          </>
-        ) : (
-          <Button title="Leave Room" onPress={handleLeaveRoom} color="gray" />
+            >
+              <Text className="text-red-600">Delete Room</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={players.length === 1}
+              className="py-4 disabled:bg-stone-500/10 bg-sky-500/60 px-4 flex-center rounded-lg w-1/2"
+              onPress={() => socket?.emit("startGame", roomIdString, user?.$id)}
+            >
+              <Text className="text-sky-500 disabled:text-stone-300" disabled={players.length === 1}>Start Game</Text>
+            </TouchableOpacity>
+          </View>
         )}
-      </View> */}
+      </View>
     </FullSafeAreaScreen>
   );
 };
